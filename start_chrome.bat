@@ -51,7 +51,7 @@ echo  [STEP 3/3] Launching Chrome...
 echo   Debug port: 9222
 echo.
 
-start "" "%CHROME_EXE%" --remote-debugging-port=9222 --remote-allow-origins="*" --user-data-dir="C:\chrome-debug" --no-first-run
+start "" "%CHROME_EXE%" --remote-debugging-port=9222 --remote-allow-origins="*" --user-data-dir=".\chrome-profile" --no-first-run
 
 REM ─── Wait for CDP port to be ready ───────────────────────────────────────
 echo  Waiting for port 9222 to become available...

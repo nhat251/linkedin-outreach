@@ -205,8 +205,9 @@ def main():
     if check_chrome_running():
         print("  ✅ Chrome is already running")
     else:
+        chrome_profile = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chrome-profile')
         print("  🔵 Opening Chrome with remote debugging port 9222...")
-        print("  📂 Using C:\\chrome-debug (separate profile for automation)")
+        print(f"  📂 Using: {chrome_profile}")
         try:
             # Windows path for Chrome
             chrome_paths = [
@@ -220,10 +221,10 @@ def main():
                     chrome_exe = p
                     break
             if chrome_exe:
-                subprocess.Popen([chrome_exe, "--remote-debugging-port=9222", "--remote-allow-origins=*", '--user-data-dir="C:\\chrome-debug"'], shell=False)
+                subprocess.Popen([chrome_exe, "--remote-debugging-port=9222", "--remote-allow-origins=*", f'--user-data-dir="{chrome_profile}"'], shell=False)
             else:
                 # Try launching via start command
-                subprocess.run(["start", "chrome", "--remote-debugging-port=9222", "--remote-allow-origins=*", '--user-data-dir="C:\\chrome-debug"'], shell=True)
+                subprocess.run(["start", "chrome", "--remote-debugging-port=9222", "--remote-allow-origins=*", f'--user-data-dir="{chrome_profile}"'], shell=True)
             time.sleep(3)
         except Exception as e:
             print(f"  ⚠️  Failed to open Chrome: {e}")

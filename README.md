@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 ### 2. Chrome Profile Setup (First Time Only)
 
-The scripts use a **separate Chrome profile** at `C:\chrome-debug` so your personal browsing isn't affected.
+The scripts use a **separate Chrome profile** inside the project folder (`chrome-profile/`) so your personal browsing isn't affected. Chrome will auto-create this folder the first time you run.
 
 ```powershell
 # 1. Start Chrome with remote debugging
@@ -67,7 +67,7 @@ This will:
 ### Manual steps
 
 ```powershell
-# Start Chrome with dedicated profile at C:\chrome-debug
+# Start Chrome with dedicated profile (auto-created in chrome-profile/)
 .\start_chrome.bat
 
 # Then run the guide (set UTF-8 so Vietnamese/emoji display correctly)
@@ -105,6 +105,7 @@ In the job list menu, press `c` to clear the CSV and fetch fresh jobs from UCTal
 ├── collect_founder_logs.py  # Collect personal stories for content
 ├── config.json              # Your personal config (gitignored)
 ├── config.example.json      # Template for config.json
+├── chrome-profile/          # Chrome profile (auto-created, gitignored)
 ├── uctalent_jobs.csv        # Job database (auto-managed)
 └── requirements.txt         # Python dependencies
 ```
