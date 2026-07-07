@@ -11,7 +11,27 @@ Automate LinkedIn bounty job outreach for UCTalent. Fetch jobs, generate Boolean
 pip install -r requirements.txt
 ```
 
-### 2. Configure
+### 2. Chrome Profile Setup (First Time Only)
+
+The scripts use a **separate Chrome profile** at `C:\chrome-debug` so your personal browsing isn't affected.
+
+```powershell
+# 1. Start Chrome with remote debugging
+.\start_chrome.bat
+```
+
+A new Chrome window will open. **Sign in to these accounts** (one time only, cookies are saved):
+
+| Account | Why |
+|---------|-----|
+| 🔗 **LinkedIn** (linkedin.com) | Post jobs, send connection requests |
+| 🐦 **X/Twitter** (x.com) | Post job tweets |
+| 📘 **Facebook** (facebook.com) | Post in Vietnamese tech groups |
+| 🏢 **UCTalent** (uctalent.io) | Get referral links |
+
+After signing in, close Chrome. Next time you run `run.bat` or `start_chrome.bat`, you'll already be logged in.
+
+### 3. Configure
 
 ```powershell
 # Copy example config and fill in your info
@@ -28,7 +48,7 @@ Edit `config.json`:
   - Or `qwen_api_key` from [modelstudio.console.alibabacloud.com](https://modelstudio.console.alibabacloud.com)
 - Set `use_nvidia: true` (or your chosen model)
 
-### 3. Run
+### 4. Run
 
 **One-click:**
 
@@ -47,10 +67,10 @@ This will:
 ### Manual steps
 
 ```powershell
-# Just start Chrome (if run.bat didn't)
+# Start Chrome with dedicated profile at C:\chrome-debug
 .\start_chrome.bat
 
-# Then run the guide
+# Then run the guide (set UTF-8 so Vietnamese/emoji display correctly)
 $env:PYTHONIOENCODING='utf-8'; python guide.py
 ```
 
