@@ -10,7 +10,6 @@ config.json
 
 # Chrome debugging data
 .last_tab
-chrome-profile/
 
 # Log artifacts from start_chrome.bat / run.bat
 Chrome

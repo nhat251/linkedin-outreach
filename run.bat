@@ -44,7 +44,7 @@ if "%CHROME_EXE%"=="" (
     exit /b 1
 )
 
-start "" "%CHROME_EXE%" --remote-debugging-port=9222 --remote-allow-origins="*" --user-data-dir=".\chrome-profile" --no-first-run
+start "" "%CHROME_EXE%" --remote-debugging-port=9222 --remote-allow-origins="*" --user-data-dir="C:\chrome-debug" --no-first-run
 
 REM ─── Wait for CDP port ──────────────────────────────────────────────────
 echo   Waiting for Chrome (port 9222)...
