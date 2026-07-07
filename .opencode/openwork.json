@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "workspace": {
+    "name": "linkedin_outreach",
+    "createdAt": 1779763839666,
+    "preset": "starter"
+  },
+  "authorizedRoots": [
+    "D:\\UCTalent\\headhunt\\linkedin_outreach"
+  ],
+  "reload": null
+}

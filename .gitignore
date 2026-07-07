@@ -1,0 +1,29 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment / secrets
+.env
+*.key
+config.json
+config.template.json
+
+# Chrome debugging data
+.last_tab
+
+# Log artifacts from start_chrome.bat / run.bat
+Chrome
+No
+Old
+
+# OS files
+.DS_Store
+Thumbs.db
+__MACOSX/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

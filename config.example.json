@@ -1,0 +1,39 @@
+{
+  "name": "Your Name",
+  "role": "Your Role | Headhunter",
+  "title_prefix": "Your Title",
+  "location": "Your City, Vietnam",
+  "personal_story": "Write your personal journey here — why you do headhunting, how you got started, what drives you.",
+  "mission_statement": "What your platform/company does — who you connect, how you help.",
+  "brand_voice": "Professional, polite, headhunter-to-candidate communication style. No corporate fluff. Direct, practical, focused on human value.",
+  "linkedin_url": "https://linkedin.com/in/your-profile",
+  "uctalent_url": "https://uctalent.io",
+  "common_hashtags": "#Web3Jobs #DecentralizedHiring #UCTalent #BlockchainRecruiting",
+  "founder_logs": "Your authentic observations and experiences — what you've seen in the job market, recruiting, or tech.",
+  "industry_takes": "Your perspective on the current job market and hiring landscape.",
+  "recent_insights": "Recent lessons, thoughts, or realizations from running your operation.",
+  "gemini_api_key": "YOUR_GEMINI_API_KEY",
+  "use_gemini": false,
+  "qwen_api_key": "YOUR_QWEN_API_KEY",
+  "use_qwen": false,
+  "nvidia_api_key": "YOUR_NVIDIA_API_KEY",
+  "use_nvidia": true,
+  "targets": {
+    "talent": {
+      "focus": "Career growth, AI matching, bypassing gatekeepers.",
+      "cta_phrases": {
+        "linkedin": "Stop being ghosted. Apply directly via our AI Agent here 👉",
+        "twitter": "Tired of black-hole job apps? Level up your career here 🚀",
+        "facebook": "Apply ngay để AI Agent giúp bạn kết nối trực tiếp với hiring manager! 💪"
+      }
+    },
+    "referrer": {
+      "focus": "Passive income, decentralized headhunting, network value.",
+      "cta_phrases": {
+        "linkedin": "Grab your unique link, share it with your network, and earn the referral fee. DM for details 👉",
+        "twitter": "Your network is an asset. Copy the link, share it, and get paid when they land the job. 💸",
+        "facebook": "Copy link và share cho network của bạn. Nhận thưởng referral minh bạch trên on-chain! 🚀"
+      }
+    }
+  }
+}
