@@ -8,6 +8,7 @@ Tracks job progress so you can work on one job per day.
 import os
 import sys
 import io
+import json
 import glob
 import time
 import csv
@@ -845,14 +846,31 @@ def view_posts(num, job, csv_file, rows, fieldnames):
     if confirm == 'y':
         referral_link = job.get('referral_link', '')
         
-        # Open LinkedIn
+        # Open LinkedIn + auto-fill post via JS
         open_url_in_tab("https://www.linkedin.com/feed/")
-        print("  ✅ Opened LinkedIn. Paste your post and click Post.")
+        print("  ⏳ Waiting for LinkedIn to load...")
+        time.sleep(4)
+        js_fill = f"""
+        var btn = document.querySelector('[aria-label="Start a post"]');
+        if (btn) btn.click();
+        setTimeout(function() {{
+            var editor = document.querySelector('div[role="textbox"][aria-label*="What do you want"]');
+            if (editor) {{
+                editor.textContent = {json.dumps(linkedin_post)};
+                editor.dispatchEvent(new Event('input', {{bubbles: true}}));
+            }}
+        }}, 2000);
+        """
+        execute_js(js_fill, timeout=10)
+        print("  ✅ LinkedIn pre-filled! (You may need to click the text box to focus)")
         
-        # Open X
-        x_url = f"https://twitter.com/compose/tweet?text={urllib.parse.quote(linkedin_post[:280])}"
+        # Open X with pre-filled text
+        x_url = f"https://twitter.com/compose/tweet?text={urllib.parse.quote(job.get('x_post', linkedin_post)[:280])}"
         open_url_in_tab(x_url)
-        print("  ✅ Opened X/Twitter. Review and Tweet.")
+        time.sleep(2)
+        print("  ✅ X/Twitter draft ready!")
+        
+        print("  💡 Switch to each tab, review, and Post.")
 
 
 if __name__ == "__main__":
