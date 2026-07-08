@@ -115,11 +115,9 @@ RECENT INSIGHTS:
 {recent_insights}
 
 TARGET AUDIENCE:
-You randomly target either:
-1. TALENT: {talent_focus}
-   CTA: {talent_cta}
-2. REFERRER: {referrer_focus}
-   CTA: {referrer_cta}
+You target TALENT (job seekers):
+- Focus: {talent_focus}
+- CTA: {talent_cta}
 
 HASHTAGS: {hashtags}
 
@@ -153,8 +151,6 @@ def build_system_prompt(config):
         recent_insights=config.get('recent_insights', ''),
         talent_focus=talent.get('focus', 'Career growth'),
         talent_cta=talent.get('cta_phrases', {}).get('linkedin', ''),
-        referrer_focus=referrer.get('focus', 'Passive income'),
-        referrer_cta=referrer.get('cta_phrases', {}).get('linkedin', ''),
         hashtags=config.get('common_hashtags', '#Web3Jobs #UCTalent')
     )
 
@@ -260,11 +256,9 @@ INDUSTRY TAKES: {config.get('industry_takes', '')}
 RECENT INSIGHTS: {config.get('recent_insights', '')}
 
 TARGET AUDIENCE:
-You randomly target either:
-1. TALENT: {talent.get('focus', 'Career growth')}
-   CTA: {talent.get('cta_phrases', {}).get('linkedin', '')}
-2. REFERRER: {referrer.get('focus', 'Passive income')}
-   CTA: {referrer.get('cta_phrases', {}).get('linkedin', '')}
+You target TALENT (job seekers):
+- Focus: {talent.get('focus', 'Career growth')}
+- CTA: {talent.get('cta_phrases', {}).get('linkedin', '')}
 
 HASHTAGS: {config.get('common_hashtags', '#Web3Jobs #DecentralizedHiring #UCTalent')}
 
@@ -284,7 +278,6 @@ TONE: Founder-to-founder. Direct. No fluff."""
 def linkedin_post_prompt(job, referral_link, config):
     """Build prompt for LinkedIn post"""
     title = job.get('title', '')
-    bounty = float(job.get('bounty', 0) or 0)
     location = job.get('location', '')
     salary = job.get('salary', '')
     tags = job.get('tags', '')
@@ -294,16 +287,14 @@ def linkedin_post_prompt(job, referral_link, config):
     user_prompt = f"""Write a LinkedIn post for a job opportunity:
 
 Job: {title}
-Bounty: ${bounty:,.0f}
 Location: {location}
 Salary: {salary}
 Skills: {tags}
-Referral Link (put in comments): {referral_link}
 
 Requirements:
 - Hook: Short, attention-grabbing, use your real voice
 - Body: Brief but compelling, tell a story
-- CTA: Tell them to check comments for the link
+- CTA: Natural call to action
 - Include 1-3 relevant hashtags
 - Keep under 2000 characters
 - Write naturally like you're typing to a peer, not a marketing team
@@ -316,7 +307,6 @@ Write ONE post only. No explanations."""
 def x_post_prompt(job, referral_link, config):
     """Build prompt for X/Twitter post"""
     title = job.get('title', '')
-    bounty = float(job.get('bounty', 0) or 0)
     location = job.get('location', '')
     salary = job.get('salary', '')
     tags = job.get('tags', '')
@@ -326,15 +316,13 @@ def x_post_prompt(job, referral_link, config):
     user_prompt = f"""Write a short X/Twitter post for a job opportunity:
 
 Job: {title}
-Bounty: ${bounty:,.0f}
 Location: {location}
 Skills: {tags}
-Referral Link: {referral_link}
 
 Requirements:
 - Hook: Attention-grabbing, your real voice
 - Body: Brief, punchy, max 200 characters
-- CTA: Tell them to check comments for the link
+- CTA: Brief natural call to action
 - Include relevant hashtags (1-2 max)
 - Keep under 280 characters total
 
@@ -346,7 +334,6 @@ Write ONE tweet only. No explanations."""
 def facebook_post_prompt(job, referral_link, config):
     """Build prompt for Facebook post (Vietnamese/English mix)"""
     title = job.get('title', '')
-    bounty = float(job.get('bounty', 0) or 0)
     location = job.get('location', '')
     salary = job.get('salary', '')
     tags = job.get('tags', '')
@@ -356,11 +343,9 @@ def facebook_post_prompt(job, referral_link, config):
     user_prompt = f"""Write a Facebook post in Vietnamese (or mix EN/VN naturally) for a job opportunity:
 
 Job: {title}
-Bounty: ${bounty:,.0f}
 Location: {location}
 Salary: {salary}
 Skills: {tags}
-Referral Link: {referral_link}
 
 Requirements:
 - Hook: Something relatable to Vietnamese tech community
@@ -384,19 +369,17 @@ def linkedin_message_prompt(job, referral_link, config):
     
     system_prompt = build_qwen_system_prompt(config)
     
-    user_prompt = f"""Write a LinkedIn connection request message for a job referral:
+    user_prompt = f"""Write a LinkedIn connection request message for a job opportunity:
 
 Job: {title}
 Location: {location}
 Salary: {salary}
 Skills: {tags}
-Referral Link: {referral_link}
 
 Requirements:
 - Short (under 300 characters)
 - This is the SAME message you'll send to multiple candidates for this job
 - Focus on the JOB opportunity, not their specific profile
-- Include the referral link in the message
 - Sound like a real founder reaching out, not a templated message
 - Include a subtle call to action
 
@@ -408,22 +391,18 @@ Write ONE message only. No explanations."""
 def x_message_prompt(job, referral_link, config):
     """Build prompt for X/Twitter DM outreach message"""
     title = job.get('title', '')
-    bounty = float(job.get('bounty', 0) or 0)
     location = job.get('location', '')
     
     system_prompt = build_qwen_system_prompt(config)
     
-    user_prompt = f"""Write a short X/Twitter DM message for a job referral:
+    user_prompt = f"""Write a short X/Twitter DM message for a job opportunity:
 
 Job: {title}
-Bounty: ${bounty:,.0f}
 Location: {location}
-Referral Link: {referral_link}
 
 Requirements:
 - Very short (under 200 characters)
 - Sound like a real founder, not a bot
-- Include the referral link
 - Include a subtle call to action
 
 Write ONE message only. No explanations."""
@@ -554,7 +533,6 @@ def generate_with_gemini(job, referral_link, config, content_type):
     system_prompt = build_system_prompt(config)
     
     title = job.get('title', '')
-    bounty = float(job.get('bounty', 0) or 0)
     location = job.get('location', '')
     salary = job.get('salary', '')
     tags = job.get('tags', '')
@@ -583,15 +561,13 @@ def generate_with_gemini(job, referral_link, config, content_type):
         user_prompt = f"""Write a LinkedIn post for a job opportunity:
 
 Job: {title}
-Bounty: ${bounty:,.0f}
 Location: {location}
 Skills (INCLUDE AT LEAST 2): {tags}
-Referral Link in comment
 
 Requirements:
 - Hook: Short, attention-grabbing
 - Body: Brief but compelling
-- CTA: Tell them to check comments
+- CTA: Natural call to action
 - Include 1-2 relevant hashtags
 - Keep under 2000 characters
 - Write naturally like a founder, not a marketing team
@@ -602,15 +578,13 @@ Write ONE post only. No explanations."""
         user_prompt = f"""Write a short X/Twitter post for a job opportunity:
 
 Job: {title}
-Bounty: ${bounty:,.0f}
 Location: {location}
 Skills: {tags}
-Referral Link: {referral_link}
 
 Requirements:
 - Hook: Attention-grabbing, short
 - Body: Brief, punchy, max 200 characters
-- CTA: Tell them to check comments for the link
+- CTA: Brief natural call to action
 - Include 1-2 relevant hashtags max
 - Keep under 280 characters total
 
@@ -620,10 +594,8 @@ Write ONE tweet only. No explanations."""
         user_prompt = f"""Write a Facebook post in Vietnamese (or mix EN/VN naturally) for a job opportunity:
 
 Job: {title}
-Bounty: ${bounty:,.0f}
 Location: {location}
 Skills: {tags}
-Referral Link: {referral_link}
 
 Requirements:
 - Hook: Something relatable to Vietnamese tech community
@@ -635,19 +607,17 @@ Requirements:
 Write ONE post only. No explanations."""
         
     elif content_type == 'outreach_message':
-        user_prompt = f"""Write a LinkedIn connection request message for a job referral:
+        user_prompt = f"""Write a LinkedIn connection request message for a job opportunity:
 
 Job: {title}
 Location: {location}
 Salary: {salary}
 Skills: {tags}
-Referral Link: {referral_link}
 
 Requirements:
 - Short (under 300 characters)
 - This is the SAME message you'll send to multiple candidates for this job
 - Focus on the JOB opportunity, not their specific profile
-- Include the referral link in the message
 - Sound like a real founder reaching out, not a templated message
 - Include a subtle call to action
 

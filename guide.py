@@ -918,6 +918,12 @@ def view_posts(num, job, csv_file, rows, fieldnames):
         print("  ✅ X/Twitter draft ready!")
         
         print("  💡 Switch to each tab, review, and Post.")
+        print()
+        print("  ──── 📋 Referral Link ────")
+        print(f"  🔗 {referral_link}")
+        print("  ──────────────────────────")
+        print()
+        input("  Press Enter to return to menu...")
 
 
 if __name__ == "__main__":
