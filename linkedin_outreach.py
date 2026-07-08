@@ -292,9 +292,10 @@ Salary: {salary}
 Skills: {tags}
 
 Requirements:
+- Write in English
 - Hook: Short, attention-grabbing, use your real voice
 - Body: Brief but compelling, tell a story
-- CTA: Natural call to action
+- CTA: Say "Link in comments" — do NOT include any URL in the post body
 - Include 1-3 relevant hashtags
 - Keep under 2000 characters
 - Write naturally like you're typing to a peer, not a marketing team
@@ -320,9 +321,10 @@ Location: {location}
 Skills: {tags}
 
 Requirements:
+- Write in English
 - Hook: Attention-grabbing, your real voice
 - Body: Brief, punchy, max 200 characters
-- CTA: Brief natural call to action
+- CTA: Say "Link in comments" or "Link below 👇" — do NOT include any URL in the post body
 - Include relevant hashtags (1-2 max)
 - Keep under 280 characters total
 
@@ -332,7 +334,7 @@ Write ONE tweet only. No explanations."""
 
 
 def facebook_post_prompt(job, referral_link, config):
-    """Build prompt for Facebook post (Vietnamese/English mix)"""
+    """Build prompt for Facebook post"""
     title = job.get('title', '')
     location = job.get('location', '')
     salary = job.get('salary', '')
@@ -340,7 +342,7 @@ def facebook_post_prompt(job, referral_link, config):
     
     system_prompt = build_qwen_system_prompt(config)
     
-    user_prompt = f"""Write a Facebook post in Vietnamese (or mix EN/VN naturally) for a job opportunity:
+    user_prompt = f"""Write a Facebook post for a job opportunity:
 
 Job: {title}
 Location: {location}
@@ -348,11 +350,11 @@ Salary: {salary}
 Skills: {tags}
 
 Requirements:
-- Hook: Something relatable to Vietnamese tech community
-- Body: Describe opportunity naturally in Vietnamese style
-- CTA: Natural call to action in Vietnamese
-- Use Vietnamese emojis appropriately
-- Include hashtags
+- Write in English
+- Hook: Short, attention-grabbing
+- Body: Brief but compelling
+- CTA: Say "Link in comments" — do NOT include any URL in the post body
+- Include relevant hashtags
 - Keep under 500 characters
 
 Write ONE post only. No explanations."""
@@ -565,9 +567,10 @@ Location: {location}
 Skills (INCLUDE AT LEAST 2): {tags}
 
 Requirements:
+- Write in English
 - Hook: Short, attention-grabbing
 - Body: Brief but compelling
-- CTA: Natural call to action
+- CTA: Say "Link in comments" — do NOT include any URL in the post body
 - Include 1-2 relevant hashtags
 - Keep under 2000 characters
 - Write naturally like a founder, not a marketing team
@@ -582,27 +585,28 @@ Location: {location}
 Skills: {tags}
 
 Requirements:
+- Write in English
 - Hook: Attention-grabbing, short
 - Body: Brief, punchy, max 200 characters
-- CTA: Brief natural call to action
+- CTA: Say "Link in comments" or "Link below 👇" — do NOT include any URL in the post body
 - Include 1-2 relevant hashtags max
 - Keep under 280 characters total
 
 Write ONE tweet only. No explanations."""
         
     elif content_type == 'facebook_post':
-        user_prompt = f"""Write a Facebook post in Vietnamese (or mix EN/VN naturally) for a job opportunity:
+        user_prompt = f"""Write a Facebook post for a job opportunity:
 
 Job: {title}
 Location: {location}
 Skills: {tags}
 
 Requirements:
-- Hook: Something relatable to Vietnamese tech community
-- Body: Describe opportunity naturally in Vietnamese style
-- CTA: Natural call to action in Vietnamese
-- Use Vietnamese emojis appropriately
-- Include hashtags
+- Write in English
+- Hook: Short, attention-grabbing
+- Body: Brief but compelling
+- CTA: Say "Link in comments" — do NOT include any URL in the post body
+- Include relevant hashtags
 
 Write ONE post only. No explanations."""
         
@@ -1586,7 +1590,7 @@ def generate_x_comment(job, referral_link, config):
 
 
 def generate_facebook_post(job, referral_link, config):
-    """Generate short Facebook post in Vietnamese (no external links)"""
+    """Generate short Facebook post in English"""
     if config.get('use_nvidia', False):
         nvidia_result = generate_with_nvidia(job, referral_link, config, 'facebook_post')
         if nvidia_result:
@@ -1603,84 +1607,45 @@ def generate_facebook_post(job, referral_link, config):
             return clean_content(gemini_result.strip())
     
     title = clean_title(job['title'])
-    bounty = float(job.get('bounty', 0) or 0)
     location = job.get('location', '')
     salary = job.get('salary', '')
     desc = job.get('description', '')
     tags = job.get('tags', [])
     
-    location_text = f"📍 {location}" if location else "🌏 Làm việc từ xa"
+    location_text = f"📍 {location}" if location else "🌏 Remote"
     salary_text = f"💰 {salary}" if salary else ""
     skills = extract_key_skills(desc, tags)
     skills_str = ", ".join(skills)
     
     target_name = select_target(config)
-    target = config.get('targets', {}).get(target_name, {})
     
-    # Generate authentic hook (translated to Vietnamese context)
-    founder_logs = config.get('founder_logs', '').strip()
-    industry_takes = config.get('industry_takes', '').strip()
-    recent_insights = config.get('recent_insights', '').strip()
-    
-    vietnamese_hooks = []
-    
-    # Try to use founder logs (keep original language or translate key insights)
-    if founder_logs:
-        log_lines = [line.strip() for line in founder_logs.split('\n') if line.strip()]
-        if log_lines:
-            import random
-            vietnamese_hooks.append(f"Tôi đã trải nghiệm thực tế: {random.choice(log_lines)}")
-    
-    if industry_takes:
-        take_lines = [line.strip() for line in industry_takes.split('\n') if line.strip()]
-        if take_lines:
-            import random
-            vietnamese_hooks.append(f"Góc nhìn của tôi về thị trường: {random.choice(take_lines)}")
-    
-    if recent_insights:
-        insight_lines = [line.strip() for line in recent_insights.split('\n') if line.strip()]
-        if insight_lines:
-            import random
-            vietnamese_hooks.append(f"Điều tôi thấy gần đây: {random.choice(insight_lines)}")
-    
-    if not vietnamese_hooks:
-        if target_name == 'talent':
-            vietnamese_hooks = [
-                "Bạn đã bao giờ apply một công ty và chẳng nghe lại gì chưa?",
-                "Tôi đã gặp quá nhiều engineer giỏi bị bỏ qua chỉ vì ATS filter."
-            ]
-        else:
-            vietnamese_hooks = [
-                "Thị trường tuyển dụng tech hiện tại: công ty thất vọng vì không tìm được người giỏi.",
-                "Một cơ hội việc làm đang cần gấp."
-            ]
-    
-    authentic_hook_vn = vietnamese_hooks[0]
+    # Generate authentic hook
+    authentic_hook = generate_authentic_hook(config, job, target_name)
     
     if target_name == 'talent':
-        return clean_content(f"""{authentic_hook_vn}
+        return clean_content(f"""{authentic_hook}
 
-Hiện tại có một vị trí đang cần gấp: {title}
+We're hiring a {title}:
 
 {location_text}
 {salary_text}
-🔧 Cần: {skills_str}
+🔧 Skills: {skills_str}
 
-Apply ngay hoặc giới thiệu người phù hợp!
+Link in comments 👇
 
-{config.get('common_hashtags', '#Web3Jobs #TuyenDungIT')}""".strip())
+{config.get('common_hashtags', '#Web3Jobs #UCTalent')}""".strip())
     else:
-        return clean_content(f"""{authentic_hook_vn}
+        return clean_content(f"""{authentic_hook}
 
-Vị trí đang cần gấp: {title}
+Know someone who fits? We're hiring a {title}:
 
 {location_text}
 {salary_text}
-🔧 Cần: {skills_str}
+🔧 Skills: {skills_str}
 
-Apply hoặc giới thiệu người phù hợp!
+Link in comments 👇
 
-{config.get('common_hashtags', '#Web3Jobs #TuyenDungIT')}""".strip())
+{config.get('common_hashtags', '#Web3Jobs #UCTalent')}""".strip())
 
 
 def generate_facebook_comment(job, referral_link, config):
