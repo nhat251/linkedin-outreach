@@ -851,18 +851,21 @@ def view_posts(num, job, csv_file, rows, fieldnames):
         print("  ⏳ Waiting for LinkedIn to load...")
         time.sleep(4)
         js_fill = f"""
-        var btn = document.querySelector('[aria-label="Start a post"]');
+        // Click "Start a post" button (any language)
+        var btn = document.querySelector('[aria-label*="post" i], [aria-label*="bài" i], [role="combobox"]');
         if (btn) btn.click();
         setTimeout(function() {{
-            var editor = document.querySelector('div[role="textbox"][aria-label*="What do you want"]');
+            // Find the post editor (contenteditable div with role="textbox")
+            var editor = document.querySelector('div[role="textbox"][contenteditable="true"]');
+            if (!editor) editor = document.querySelector('div[data-artdeco-is-focused="true"]');
             if (editor) {{
-                editor.textContent = {json.dumps(linkedin_post)};
-                editor.dispatchEvent(new Event('input', {{bubbles: true}}));
+                editor.focus();
+                document.execCommand('insertText', false, {json.dumps(linkedin_post)});
             }}
-        }}, 2000);
+        }}, 3000);
         """
         execute_js(js_fill, timeout=10)
-        print("  ✅ LinkedIn pre-filled! (You may need to click the text box to focus)")
+        print("  ✅ LinkedIn draft ready! Check the tab and click Post.")
         
         # Open X with pre-filled text
         x_url = f"https://twitter.com/compose/tweet?text={urllib.parse.quote(job.get('x_post', linkedin_post)[:280])}"

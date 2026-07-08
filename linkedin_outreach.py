@@ -1459,9 +1459,9 @@ def generate_authentic_hook(config, job, target_name):
             ]
         else:
             hooks = [
-                "This role comes with a ${bounty:,.0f} referral bounty.",
-                "Our client is paying ${bounty:,.0f} for successful referrals on this role.",
-                "High-value opportunity: ${bounty:,.0f} referral bounty for {title}"
+                "I've been looking for a {title} for one of my clients.",
+                "Great opportunity for someone with the right skills.",
+                "This {title} role is open and I'm helping them find the right fit."
             ]
     
     title = job.get('title', '')
@@ -1530,12 +1530,10 @@ P.S. If you want an intro to the hiring team, DM me.
 
 Right now, one of our clients is hiring a {title}:
 📍 {location or 'Remote'}
-💰 ${bounty:,.0f} referral bounty
+{'💰 ' + salary if salary else ''}{'💰 Competitive' if not salary else ''}
 🔧 Skills: {skills_str}
 
-Your network is your net worth. Monetize it.
-
-P.S. Know someone who fits? Share their profile and earn the bounty.
+Know someone who fits? Let me know!
 
 {name} | {role}
 
@@ -1549,7 +1547,7 @@ def generate_linkedin_comment(job, referral_link, config):
     if target_name == 'talent':
         return clean_content(f"Apply directly via our AI Agent — no middlemen, no ghosting:\n{referral_link}")
     else:
-        return clean_content(f"Grab your unique link, share it with your network, and earn the referral fee:\n{referral_link}")
+        return clean_content(f"Apply directly via our AI Agent:\n{referral_link}")
 
 
 def generate_x_post(job, referral_link, config):
@@ -1614,7 +1612,7 @@ def generate_x_comment(job, referral_link, config):
     if target_name == 'talent':
         return clean_content(f"Apply directly via our AI Agent:\n{referral_link}")
     else:
-        return clean_content(f"Copy the link, share it, get paid when they land the job:\n{referral_link}")
+        return clean_content(f"Apply directly:\n{referral_link}")
 
 
 def generate_facebook_post(job, referral_link, config):
@@ -1684,7 +1682,7 @@ def generate_facebook_post(job, referral_link, config):
         else:
             vietnamese_hooks = [
                 "Thị trường tuyển dụng tech hiện tại: công ty thất vọng vì không tìm được người giỏi.",
-                "Một cơ hội hiếm có với thưởng giới thiệu cao."
+                "Một cơ hội việc làm đang cần gấp."
             ]
     
     authentic_hook_vn = vietnamese_hooks[0]
@@ -1706,12 +1704,11 @@ Apply ngay hoặc giới thiệu người phù hợp!
 
 Vị trí đang cần gấp: {title}
 
-🎁 Thưởng giới thiệu: ${bounty:,.0f} USD
 {location_text}
 {salary_text}
 🔧 Cần: {skills_str}
 
-Network của bạn là tài sản. Monetize nó!
+Apply hoặc giới thiệu người phù hợp!
 
 {config.get('common_hashtags', '#Web3Jobs #TuyenDungIT')}""".strip())
 
@@ -1723,7 +1720,7 @@ def generate_facebook_comment(job, referral_link, config):
     if target_name == 'talent':
         return clean_content(f"Apply ngay để AI Agent giúp bạn kết nối trực tiếp với hiring manager:\n{referral_link}")
     else:
-        return clean_content(f"Copy link và share cho network của bạn. Nhận thưởng referral minh bạch trên on-chain:\n{referral_link}")
+        return clean_content(f"Apply ngay:\n{referral_link}")
 
 
 def generate_image_text(job, config):
@@ -1751,20 +1748,18 @@ def generate_image_text(job, config):
             lines.append(f"💰 {salary}")
         lines.extend([
             "",
-            f"Apply via {config.get('name', 'Our')} referral link",
+            f"Apply via {config.get('name', 'Our')}",
             uctalent_domain
         ])
     else:
         lines.extend([
-            f"Referral Bounty: ${bounty:,.0f} USD",
-            "",
             f"📍 {location or 'Remote'}",
         ])
         if salary:
             lines.append(f"💰 {salary}")
         lines.extend([
             "",
-            "Share with your network. Earn rewards.",
+            f"Apply via {config.get('name', 'Our')}",
             uctalent_domain
         ])
     
