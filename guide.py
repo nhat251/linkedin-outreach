@@ -847,9 +847,9 @@ def view_posts(num, job, csv_file, rows, fieldnames):
         referral_link = job.get('referral_link', '')
         
         # Open LinkedIn + auto-fill post via JS
-        open_url_in_tab("https://www.linkedin.com/")
+        open_url_in_tab("https://www.linkedin.com/feed/")
         print("  ⏳ Waiting for LinkedIn to load...")
-        time.sleep(4)
+        time.sleep(5)
         js_fill = f"""
         // Click "Start a post" button (any language)
         var btn = document.querySelector('[aria-label*="post" i], [aria-label*="bài" i], [role="combobox"]');
@@ -864,13 +864,17 @@ def view_posts(num, job, csv_file, rows, fieldnames):
             }}
         }}, 3000);
         """
-        execute_js(js_fill, timeout=10)
-        print("  ✅ LinkedIn draft ready! Check the tab and click Post.")
+        execute_js(js_fill, timeout=15)
+        print("  ✅ LinkedIn draft ready! Check the tab.")
+        print()
+        input("  Press Enter when you're done with LinkedIn (or skip to open Twitter)...")
+        print()
         
         # Open X with pre-filled text
-        x_url = f"https://twitter.com/compose/tweet?text={urllib.parse.quote(job.get('x_post', linkedin_post)[:280])}"
+        x_post = job.get('x_post', '')
+        x_text = x_post if x_post else linkedin_post
+        x_url = f"https://twitter.com/compose/tweet?text={urllib.parse.quote(x_text[:280])}"
         open_url_in_tab(x_url)
-        time.sleep(2)
         print("  ✅ X/Twitter draft ready!")
         
         print("  💡 Switch to each tab, review, and Post.")
