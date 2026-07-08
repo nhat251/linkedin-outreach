@@ -847,7 +847,14 @@ def view_posts(num, job, csv_file, rows, fieldnames):
         referral_link = job.get('referral_link', '')
         
         # Open LinkedIn + auto-fill post via JS
-        open_url_in_tab("https://www.linkedin.com/feed/")
+        # Use profile URL from config (avoids Creator mode redirect from /feed/ to analytics)
+        sys.path.insert(0, '.')
+        try:
+            from linkedin_outreach import load_config
+            li_url = load_config().get('linkedin_url', 'https://www.linkedin.com/in/')
+        except:
+            li_url = 'https://www.linkedin.com/in/'
+        open_url_in_tab(li_url)
         print("  ⏳ Waiting for LinkedIn to load...")
         time.sleep(5)
         js_fill = f"""
