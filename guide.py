@@ -846,38 +846,71 @@ def view_posts(num, job, csv_file, rows, fieldnames):
     if confirm == 'y':
         referral_link = job.get('referral_link', '')
         
-        # Open LinkedIn + auto-fill post via JS
-        # Use profile URL from config (avoids Creator mode redirect from /feed/ to analytics)
-        sys.path.insert(0, '.')
-        try:
-            from linkedin_outreach import load_config
-            li_url = load_config().get('linkedin_url', 'https://www.linkedin.com/in/')
-        except:
-            li_url = 'https://www.linkedin.com/in/'
-        open_url_in_tab(li_url)
+        # Open LinkedIn feed + click "Start a post" (exact selector avoids sidebar "Post impressions")
+        open_url_in_tab("https://www.linkedin.com/feed/")
         print("  ⏳ Waiting for LinkedIn to load...")
-        time.sleep(5)
-        js_fill = f"""
-        // Click "Start a post" button (any language)
-        var btn = document.querySelector('[aria-label*="post" i], [aria-label*="bài" i], [role="combobox"]');
-        if (btn) btn.click();
-        setTimeout(function() {{
-            // Find the post editor (contenteditable div with role="textbox")
-            var editor = document.querySelector('div[role="textbox"][contenteditable="true"]');
-            if (!editor) editor = document.querySelector('div[data-artdeco-is-focused="true"]');
-            if (editor) {{
+        time.sleep(3)
+        # Step 1: Click "Start a post"
+        js_click = """(function() {
+            // Try exact aria-label match (div, not button)
+            var btn = document.querySelector('[aria-label="Start a post"], [aria-label="Bắt đầu bài viết"]');
+            if (!btn) { btn = document.querySelector('[role="combobox"]'); }
+            if (!btn) { return 'not_found'; }
+            // Click the anchor parent if exists (React needs native-like click)
+            var anchor = btn.closest('a');
+            if (anchor) {
+                // Dispatch proper mouse events for React synthetic events
+                ['mousedown', 'mouseup', 'click'].forEach(function(type) {
+                    anchor.dispatchEvent(new MouseEvent(type, {bubbles: true, cancelable: true, view: window, button: 0}));
+                });
+            } else {
+                btn.click();
+            }
+            return 'clicked';
+        })();"""
+        result = execute_js(js_click, timeout=15)
+        if result != 'clicked':
+            print("  ⚠️  Could not find 'Start a post' button. Try clicking it manually.")
+        else:
+            print("  ✅ Compose box opened. Filling text...")
+            time.sleep(2)
+            # Step 2: Find the Quill editor by trying multiple selectors (with retries)
+            js_fill = f"""(function() {{
+                // The compose modal lives inside a Shadow DOM (#interop-outlet)
+                var host = document.querySelector('#interop-outlet');
+                var root = host ? (host.shadowRoot || host) : document;
+                // Try multiple selectors for the editor (in shadow root first, then fallback to document)
+                var editor = root.querySelector(
+                    '.ql-editor[contenteditable="true"], ' +
+                    '.share-box-v2__modal .ql-editor, ' +
+                    'div[role="textbox"][contenteditable="true"], ' +
+                    '.editor-container [contenteditable="true"]'
+                );
+                if (!editor) {{ return 'editor_not_found'; }}
                 editor.focus();
-                document.execCommand('insertText', false, {json.dumps(linkedin_post)});
-            }}
-        }}, 3000);
-        """
-        execute_js(js_fill, timeout=15)
-        print("  ✅ LinkedIn draft ready! Check the tab.")
-        print()
-        input("  Press Enter when you're done with LinkedIn (or skip to open Twitter)...")
-        print()
-        
-        # Open X with pre-filled text
+                // Convert text to HTML paragraphs for Quill editor
+                var text = {json.dumps(linkedin_post)};
+                var paragraphs = text.split('\\n');
+                var html = paragraphs.map(function(p) {{ return '<p>' + p.replace(/</g, '&lt;') + '</p>'; }}).join('');
+                editor.innerHTML = html;
+                // Remove ql-blank class so placeholder disappears
+                editor.classList.remove('ql-blank');
+                // Dispatch input event so Quill registers the change
+                editor.dispatchEvent(new Event('input', {{ bubbles: true, cancelable: true }}));
+                return 'filled';
+            }})();"""
+            # Retry fill up to 3 times with 1s delay (in case modal is still animating)
+            result2 = None
+            for attempt in range(3):
+                result2 = execute_js(js_fill, timeout=10)
+                if result2 == 'filled':
+                    break
+                time.sleep(1)
+            if result2 == 'filled':
+                print("  ✅ Post text filled! Review and publish.")
+            else:
+                print("  ⚠️  Editor not found. Paste manually.")
+        # Auto-open X with pre-filled text
         x_post = job.get('x_post', '')
         x_text = x_post if x_post else linkedin_post
         x_url = f"https://twitter.com/compose/tweet?text={urllib.parse.quote(x_text[:280])}"
