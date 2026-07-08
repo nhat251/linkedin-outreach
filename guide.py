@@ -847,7 +847,7 @@ def view_posts(num, job, csv_file, rows, fieldnames):
         referral_link = job.get('referral_link', '')
         
         # Open LinkedIn + auto-fill post via JS
-        open_url_in_tab("https://www.linkedin.com/feed/")
+        open_url_in_tab("https://www.linkedin.com/")
         print("  ⏳ Waiting for LinkedIn to load...")
         time.sleep(4)
         js_fill = f"""
