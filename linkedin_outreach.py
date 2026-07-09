@@ -634,6 +634,11 @@ Write ONE message only. No explanations."""
     return call_gemini(system_prompt, user_prompt, api_key)
 
 
+def sort_jobs_by_date(rows):
+    """Sort job rows by created_at descending (newest first)"""
+    return sorted(rows, key=lambda r: r.get('created_at', ''), reverse=True)
+
+
 # ─── Job Fetching ───────────────────────────────────────────────────────────
 
 def get_previous_job_ids():
@@ -1950,6 +1955,7 @@ def main():
             for row in existing_rows:
                 row['last_updated'] = now_str
             
+            existing_rows = sort_jobs_by_date(existing_rows)
             with open(csv_filename, 'w', newline='', encoding='utf-8') as f:
                 writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
                 writer.writeheader()
@@ -2096,6 +2102,7 @@ def main():
             row['created_at'] = now_str
         row['last_updated'] = now_str
     
+    merged = sort_jobs_by_date(merged)
     with open(csv_filename, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
         writer.writeheader()
@@ -2154,6 +2161,7 @@ def main():
             row.update(preserved)
     
     # Save updated CSV with posts (RUN 2)
+    merged = sort_jobs_by_date(merged)
     with open(csv_filename, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
         writer.writeheader()
