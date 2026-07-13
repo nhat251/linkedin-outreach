@@ -1,15 +1,78 @@
 id,title,referral_link,bounty,bounty_display,bounty_currency,location,salary,priority,tags,description,boolean_query,outreach_message,linkedin_post,x_post,facebook_post,image_text,linkedin_comment,x_comment,facebook_comment,linkedin_profiles,status,connect_status,message_status,created_at,last_updated
-N2oBXDLc-ZNeY81FpHCge,Technical Architect (Javascript),,921.6,"23,040,000 VND",VND,"Ho Chi Minh City, Vietnam",You will love it,urgent,"Engineering Management,Software and IT Services,GraphSQL,Claude Agent SDK,React,NestJS,MongoDB,Next.js,DevOps,Node.js,Microservices,JavaScript,PostgreSQL,Github,Docker,AWS,Artificial Intelligence (AI),GitLab CI,GCP (Google cloud platform),Azure","Be involved in Technical Team, and work together with the Web team and also the Mobile team.Responsible for building up the system, architecture design, database design, and technology solutions for the project.Review code, and review solutions for the project.Solving technical issues, and developing workarounds and alternative solutions.Support, train, and build programmer’s skill in the company.Continuously research, evaluate, and implement new technologies to maximize development efficiencySalary: Open to discussHeadcounts: 3Product/ Projects Description: dự án về logistics trọng điểm của KH. Purpose of hiring: New hire.Report to: Report cho Solution Architect và Product Owner (khách hàng)Team size and structure: trung bình mỗi team dự án sẽ có 4 dev Junior, 2 dev Senior, 1 Technical Architect, 2 BA, 2 QC, 1 designer, 1 Scrum Master.","site:linkedin.com/in ""Technical Architect"" (""Javascript"" OR ""GraphSQL"" OR ""Claude Agent SDK"" OR ""React"" OR ""NestJS"") (""machine learning"" OR ""artificial intelligence"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
+qOUVnm9kDZU4Imc2BZoQE,Engineering Manager,,3544.0,"$3,544",USD,,"$180,000-$230,000/annually",normal,"Engineering Management,Software and IT Services,People management,Project Management,Planning,Team Management,E-Commerce,Supply Chain Management,Logistics","The company is scaling fast and its engineering team has grown organically - lots of talented people working on a lot of different things. This role exists to turn that into a cohesive, scalable, high-throughput organization. Reporting to the VP of Engineering (who owns architecture and technical vision), the Engineering Manager owns execution, delivery, and people management for a globally distributed team of ~10 engineers. It is a ~90% people-management role - not a player-coach. The mandate: hold a high quality bar, set firm timelines, remove roadblocks, and give engineers the support to hit deadlines - while keeping the culture kind and caring.","site:linkedin.com/in ""Engineering Manager"" (""People management"" OR ""Project Management"" OR ""Planning"" OR ""Team Management"" OR ""E-Commerce"") (""ecommerce"" OR ""e-commerce"" OR ""marketplace"")","Hi [FirstName],
 
-I came across your profile and was impressed by your experience. We're currently hiring for a Technical Architect role based in Ho Chi Minh City, Vietnam (You will love it), and your background seems like a great match.
+I came across your profile and was impressed by your experience. We're currently hiring for a Engineering Manager role  ($180,000-$230,000/annually), and your background seems like a great match.
 
-Key skills we're looking for: Engineering Management, Software and IT Services, GraphSQL.
+Key skills we're looking for: Engineering Management, Software and IT Services, People management.
 
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:11,2026-07-09 12:11
-UaloLuFKi_tCl8iiiW6q8,"Senior Software Engineer, Frontend",,3150.4,"$3,150",USD,"New York, United States","$160,000-$180,000/annually",normal,"Engineering,Software and IT Services,React,Tailwind,Next.js,Node.js,MongoDB,Datadog,TypeScript,PostgresDB,Playwright,AWS,Ruby on Rails (Ruby)","We're hiring a Senior Frontend Engineer to be the technical anchor for our Marketplace web rewrite - rebuilding the highest-traffic journeys and setting the frontend patterns the team will follow for the next 5 years. We expect to update ~75% of resortpass.com pages this year (foundation year for the web experience). The roadmap is aggressive: international expansion (Mexico & Caribbean this year, Europe next), in-housing search from Algolia, consumer experience rebuild, new Hotel SaaS tool, and Spa as a major new vertical.Senior role with Staff-leaning scope and clear growth path. Opportunity to become Tech Lead of the biggest features (full SRP and DLP rewrites) and expand cross-team influence across Marketplace Core, Growth, and Hotels.2/3 of traffic goes to web, making performance business-critical (Core Web Vitals, SEO, caching, API design). The web frontend is also the launchpad for AI integrations (concierge chatbot, AI spa booker). Tech stack: Next.js 16.x, App Router, React 19, Tailwind, shadcn UI. Also happy to evaluate strong Full Stack engineers willing to learn React/Next.js.","site:linkedin.com/in ""Senior Software Engineer, Frontend"" (""React"" OR ""Tailwind"" OR ""Next.js"" OR ""Node.js"" OR ""MongoDB"") (""ecommerce"" OR ""e-commerce"" OR ""marketplace"") ""New York, United States""","Hi [FirstName],
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-13 14:10,2026-07-13 14:10
+JzrXkPEaGF7w3LDmtr72E,AI Engineer,https://uctalent.io/referral/BirthdayN/nMti1o1aGlS7w63TwaUsQ?utm_source=headhunter&utm_medium=referral,3544.0,"$3,544",USD,,"$180,000-$230,000/annually",normal,"Engineering,Software and IT Services,Cursor,Python,API,REST API,Model Context Protocol (MCP),RAG,LLMs,Agentic Systems Engineering,AI Agents,TypeScript,Vector Databases","This is effectively a founding AI engineer seat. Portless is adopting AI across the company, but usage today is mostly basic (decks, spreadsheets, summarizing calls) with a few people vibe-coding their own dashboards - there are no real end-to-end agentic workflows yet. This person builds the AI infrastructure: shipping high-impact agentic workflows themselves, and - just as importantly - building reusable ""Lego blocks"" (APIs, MCP tools, documentation) so any team can build their own. It's a cross-functional, high-leverage role touching every team and working directly with leadership.","site:linkedin.com/in ""AI Engineer"" (""Cursor"" OR ""Python"" OR ""REST API"" OR ""Model Context Protocol (MCP)"" OR ""LLMs"")","Hi [FirstName],
+
+I came across your profile and was impressed by your experience. We're currently hiring for a AI Engineer role  ($180,000-$230,000/annually), and your background seems like a great match.
+
+Key skills we're looking for: Engineering, Software and IT Services, Cursor.
+
+Would you be open to a quick chat to explore this opportunity?
+
+Best regards,
+Nhat - UCTalent","Stop optimizing prompts. Start building systems that actually ship.
+
+Last week a founder told me they've been ""evaluating RAG architectures"" for 4 months. Four months. Their competitor launched last Tuesday.
+
+The difference? One team builds. The other debates chunking strategies on Notion.
+
+We're hiring an AI Engineer who treats LLMs like infrastructure — not magic. You'll own the agentic layer: MCP servers, vector search that doesn't hallucinate, REST APIs that scale. Python, TypeScript, Cursor-native workflow. $180-230k. Remote.
+
+No LeetCode. No take-homes. We look at what you've shipped.
+
+Link in comments
+
+#AIEngineering #AgenticSystems #UCTalent","Stop building AI demos. Start shipping agentic systems that actually work in production. We need engineers who know MCP, RAG, and vector DBs — not just prompt engineering.
+
+Link in comments 👇
+
+#AIEngineer #UCTalent","AI Engineer needed. $180-230K. Remote.
+
+We're building agentic systems that actually work — not demo-ware. RAG, MCP, vector DBs, LLMs orchestrated into production agents. Python/TypeScript. Cursor-native workflow.
+
+If you've shipped AI that solves real problems, not just benchmark chasing — let's talk.
+
+Link in comments 👇
+
+#AIEngineer #AgenticAI #LLMs #RAG #MCP #RemoteJobs #UCTalent","HIRING: AI Engineer
+
+📍 Remote
+💰 $180,000-$230,000/annually
+
+Apply via Nhat - UCTalent
+uctalent.io","Apply directly via our AI Agent — no middlemen, no ghosting:
+https://uctalent.io/referral/BirthdayN/nMti1o1aGlS7w63TwaUsQ?utmsource=headhunter&utmmedium=referral","Apply directly:
+https://uctalent.io/referral/BirthdayN/nMti1o1aGlS7w63TwaUsQ?utmsource=headhunter&utmmedium=referral","Apply ngay:
+https://uctalent.io/referral/BirthdayN/nMti1o1aGlS7w63TwaUsQ?utmsource=headhunter&utmmedium=referral","https://www.linkedin.com/in/rchhabra1,https://linkedin.com/in/lamts72,https://linkedin.com/in/nguyễn-minh-trí-0182181b4,https://linkedin.com/in/kien-kuro,https://linkedin.com/in/ahmedabdelali,https://linkedin.com/in/luandinhngo,https://linkedin.com/in/emsalmanzafar,https://linkedin.com/in/dsridharit,https://linkedin.com/in/ayubxontursunov,https://linkedin.com/in/shruti-madhav-8435641b2,https://linkedin.com/in/nncan,https://linkedin.com/in/tu-nguyen-minh-0a483a301,https://linkedin.com/in/muhammad-haider056,https://linkedin.com/in/rishabh-raj-225681274,https://linkedin.com/in/hoang-van-hao,https://linkedin.com/in/danilo-belvedere-38b26a158/en,https://linkedin.com/in/ashar-haroon,https://linkedin.com/in/husseinelhaddad,https://linkedin.com/in/matramona,https://linkedin.com/in/huy-dao-le",pending,ready_to_connect,pending,2026-07-13 14:10,2026-07-13 14:10
+Yi3qwL0k97SOxbTgX5esH,Software Engineer - Full Stack,,3150.4,"$3,150",USD,"New York, United States","$160,000-$210,000/annually",urgent,"Engineering,Software and IT Services,Node.js,Next.js,PostgreSQL,MongoDB,Playwright,AWS,Git,REST API,Datadog,NestJS,Ruby on Rails (Ruby),TypeScript,HTML and CSS,React,JavaScript,Tailwind CSS","We're hiring a Full Stack Engineer to rebuild our highest-traffic customer journeys: Search -> Details -> Booking -> Post-booking. Today, too much business logic lives in the frontend and in scattered places - pricing and inventory logic is fragmented with real concern changes can ""break everything."" This role exists to fix that: consolidating pricing/inventory logic into a coherent backend domain and establishing API contracts so teams ship without fear.Senior role with Staff-leaning scope and clear growth path into Staff-level ownership over core domains (pricing, inventory, search). You'll be a code owner: setting direction, mentoring engineers, making key architectural decisions. Key partner to the Head of Engineering, influencing 5 teams (Marketplace Consumer/Growth, Hotels, Data, Platform).Marketplace Core is taking on full API rewrites and Hotels is integrating with multiple spa vendors. The broader roadmap includes international expansion (Mexico & Caribbean this year, Europe next), in-housing search from Algolia, and Spa as a major new vertical. We want a front-end-leaning product engineer who contributes across teams from day one, owning features end-to-end.","site:linkedin.com/in ""Software Engineer"" (""Node.js"" OR ""Next.js"" OR ""PostgreSQL"" OR ""MongoDB"" OR ""Playwright"") (""ecommerce"" OR ""e-commerce"" OR ""marketplace"") ""New York, United States""","Hi [FirstName],
+
+I came across your profile and was impressed by your experience. We're currently hiring for a Software Engineer - Full Stack role based in New York, United States ($160,000-$210,000/annually), and your background seems like a great match.
+
+Key skills we're looking for: Engineering, Software and IT Services, Node.js.
+
+Would you be open to a quick chat to explore this opportunity?
+
+Best regards,
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-13 14:10,2026-07-13 14:10
+CGXQhYHgJOZT1xHPIkrck,Software Engineer,,2953.6,"$2,954",USD,"New York, United States","$150,000-$215,000/annually",urgent,"Engineering,Software and IT Services,Node.js,Docker,Git,JavaScript,Performance Management,REST API,AWS,Infrastructure,AI,CI and CD,React,Tailwind CSS,Prompt Engineering,TypeScript,Security","Product-minded full-stack engineers who own problems end-to-end - frontend, backend, infrastructure, performance, and security. Rubie calls its engineering team a ""founders-in-training"" program: you're expected to sit with customers, form a view on where the product should go, debate it with the team, and then ship it. The company just rebuilt its architecture to handle much larger data-movement workloads, opening new product surface - so there's a deep backlog of hard durability, security, workflow, and large-scale data problems to own.","site:linkedin.com/in ""Software Engineer"" (""Node.js"" OR ""Docker"" OR ""JavaScript"" OR ""Performance Management"" OR ""REST API"") (""cybersecurity"" OR ""infosec"") ""New York, United States""","Hi [FirstName],
+
+I came across your profile and was impressed by your experience. We're currently hiring for a Software Engineer role based in New York, United States ($150,000-$215,000/annually), and your background seems like a great match.
+
+Key skills we're looking for: Engineering, Software and IT Services, Node.js.
+
+Would you be open to a quick chat to explore this opportunity?
+
+Best regards,
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-13 14:10,2026-07-13 14:10
+UaloLuFKi_tCl8iiiW6q8,"Senior Software Engineer, Frontend",https://uctalent.io/referral/BirthdayN/aRzzKJNAMt2qi0EjEXPL2?utm_source=headhunter&utm_medium=referral,3150.4,"$3,150",USD,"New York, United States","$160,000-$180,000/annually",normal,"Engineering,Software and IT Services,React,Tailwind,Next.js,Node.js,MongoDB,Datadog,TypeScript,PostgresDB,Playwright,AWS,Ruby on Rails (Ruby)","We're hiring a Senior Frontend Engineer to be the technical anchor for our Marketplace web rewrite - rebuilding the highest-traffic journeys and setting the frontend patterns the team will follow for the next 5 years. We expect to update ~75% of resortpass.com pages this year (foundation year for the web experience). The roadmap is aggressive: international expansion (Mexico & Caribbean this year, Europe next), in-housing search from Algolia, consumer experience rebuild, new Hotel SaaS tool, and Spa as a major new vertical.Senior role with Staff-leaning scope and clear growth path. Opportunity to become Tech Lead of the biggest features (full SRP and DLP rewrites) and expand cross-team influence across Marketplace Core, Growth, and Hotels.2/3 of traffic goes to web, making performance business-critical (Core Web Vitals, SEO, caching, API design). The web frontend is also the launchpad for AI integrations (concierge chatbot, AI spa booker). Tech stack: Next.js 16.x, App Router, React 19, Tailwind, shadcn UI. Also happy to evaluate strong Full Stack engineers willing to learn React/Next.js.","site:linkedin.com/in ""Senior Software Engineer, Frontend"" (""React"" OR ""Tailwind"" OR ""Next.js"" OR ""Node.js"" OR ""MongoDB"") (""ecommerce"" OR ""e-commerce"" OR ""marketplace"") ""New York, United States""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Senior Software Engineer, Frontend role based in New York, United States ($160,000-$180,000/annually), and your background seems like a great match.
 
@@ -18,8 +81,46 @@ Key skills we're looking for: Engineering, Software and IT Services, React.
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 08:59,2026-07-09 12:11
-1NiCN1FRDI2jbZVmobJ_q,Full Stack Software Engineer,,2953.6,"$2,954",USD,"San Francisco, United States","$150,000-$210,000/annually",normal,"Engineering,Software and IT Services,PostgreSQL,Docker,AWS,GraphSQL,REST API,TypeScript,AI Agents,SQL,GCP,Python","The Company is seeking an innovative Full-Stack Software Engineer to join our team. You will develop, deploy, and maintain user-facing applications, back-end APIs, databases, and cloud deployment infrastructure. As part of our dynamic startup environment, you will have opportunities to own features and shape our user experience and technical architecture. You'll collaborate within our team of software engineers, power systems experts, data scientists, and designers to deliver a powerful and performant SaaS platform. This is a critical early hire with a significant amount of responsibility and corresponding competitive (location-adjusted) salary and equity compensation. Generalist full-stack responsibilities, including data infrastructure, data pipelines, AI agent features; slot into ongoing priorities like data infra(current), pipelines (near-term), AI features (end of Q1); own larger feature sets within 3 months, organize epics/sub-stories, lead fixes; engineering-led culture with hands-on product vision from founders.","site:linkedin.com/in ""Full Stack Software Engineer"" (""PostgreSQL"" OR ""Docker"" OR ""GraphSQL"" OR ""REST API"" OR ""TypeScript"") ""San Francisco, United States""","Hi [FirstName],
+Nhat - UCTalent","Most companies still think a 5-stage interview process proves you're ""senior."" It doesn't. It just proves you have patience.
+
+I've sat on both sides of that table. Built products. Hired engineers. Got ghosted more times than I count. The best seniors I've worked with? They don't need a take-home project to prove they know React, TypeScript, and Next.js. They show up, ask the right questions, and ship.
+
+This role in NYC ($160-180k) is with a team that gets it. Modern stack — React, Tailwind, Next.js, Node, Postgres, AWS. Ruby on Rails on the backend if that's your thing. Real observability with Datadog. Testing with Playwright. No theater.
+
+They're looking for someone who owns features end-to-end, mentors without ego, and cares about the craft — not the title.
+
+If that's you, stop optimizing your LinkedIn keywords and start talking to humans.
+
+Link in comments
+
+#SeniorEngineer #Frontend #NYCJobs","NYC devs — tired of ghosting after sending 50 applications?
+
+We match you directly with hiring teams. No ATS black holes. React/Next.js/TypeScript role, solid stack, real feedback.
+
+Link in comments 👇
+
+#Web3Jobs #UCTalent","Senior Frontend Engineer — NYC. $160-180K.
+
+React, Next.js, TypeScript, Tailwind. Node/Postgres/Mongo on backend. Playwright for testing. AWS + Datadog in prod. Rails experience a plus.
+
+You build clean UIs that scale. You own features end-to-end. No hand-holding needed.
+
+Link in comments 👇
+
+#SeniorFrontend #ReactJobs #NYCJobs #SoftwareEngineering #UCTalent #Hiring","HIRING: Senior Software Engineer, Frontend
+
+Stop being ghosted by job apps.
+AI matches you directly to hiring managers.
+
+📍 New York, United States
+💰 $160,000-$180,000/annually
+
+Apply via Nhat - UCTalent
+uctalent.io","Apply directly via our AI Agent — no middlemen, no ghosting:
+https://uctalent.io/referral/BirthdayN/aRzzKJNAMt2qi0EjEXPL2?utmsource=headhunter&utmmedium=referral","Apply directly via our AI Agent:
+https://uctalent.io/referral/BirthdayN/aRzzKJNAMt2qi0EjEXPL2?utmsource=headhunter&utmmedium=referral","Apply ngay:
+https://uctalent.io/referral/BirthdayN/aRzzKJNAMt2qi0EjEXPL2?utmsource=headhunter&utmmedium=referral",,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
+1NiCN1FRDI2jbZVmobJ_q,Full Stack Software Engineer,https://uctalent.io/referral/BirthdayN/OzY8ZfBpIpa8-CIi2vG1g?utm_source=headhunter&utm_medium=referral,2953.6,"$2,954",USD,"San Francisco, United States","$150,000-$210,000/annually",normal,"Engineering,Software and IT Services,PostgreSQL,Docker,AWS,GraphSQL,REST API,TypeScript,AI Agents,SQL,GCP,Python","The Company is seeking an innovative Full-Stack Software Engineer to join our team. You will develop, deploy, and maintain user-facing applications, back-end APIs, databases, and cloud deployment infrastructure. As part of our dynamic startup environment, you will have opportunities to own features and shape our user experience and technical architecture. You'll collaborate within our team of software engineers, power systems experts, data scientists, and designers to deliver a powerful and performant SaaS platform. This is a critical early hire with a significant amount of responsibility and corresponding competitive (location-adjusted) salary and equity compensation. Generalist full-stack responsibilities, including data infrastructure, data pipelines, AI agent features; slot into ongoing priorities like data infra(current), pipelines (near-term), AI features (end of Q1); own larger feature sets within 3 months, organize epics/sub-stories, lead fixes; engineering-led culture with hands-on product vision from founders.","site:linkedin.com/in ""Full Stack Software Engineer"" (""PostgreSQL"" OR ""Docker"" OR ""GraphSQL"" OR ""REST API"" OR ""TypeScript"") ""San Francisco, United States""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Full Stack Software Engineer role based in San Francisco, United States ($150,000-$210,000/annually), and your background seems like a great match.
 
@@ -28,7 +129,48 @@ Key skills we're looking for: Engineering, Software and IT Services, PostgreSQL.
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 08:59,2026-07-09 12:11
+Nhat - UCTalent","Stop sending the same CV to 200 companies and wondering why you're ghosted. 🤷‍♂️
+
+I've been there. Spent months tweaking bullet points, adding keywords, removing them. Still got rejected by ATS before a human even saw my name. The system is broken — companies want talent, talent wants visibility, and somehow both sides lose.
+
+That's exactly why we built UCTalent. AI reads your actual work, not just keywords. Matches you to roles where you genuinely fit. And when it's a no, you get a real reason — not silence.
+
+This Full Stack role in SF ($150-210k) needs someone who ships. TypeScript, Python, AWS/GCP, PostgreSQL, Docker, GraphQL, REST — and ideally you've touched AI Agents. Not just listed them. Built with them.
+
+If that's you, let's skip the gatekeepers.
+
+Link in comments 👇
+
+#UCTalent #FullStackEngineer #AIHiring","SF companies still ghosting devs after 5 rounds? 🙄
+
+We're different. Full Stack role (TS, Python, AI Agents, AWS/GCP) — direct line to hiring manager. No ATS black hole.
+
+Link in comments 👇
+
+#Web3Jobs #Hiring","San Francisco devs — your next role shouldn't require a PhD in ""LeetCode grinding"" to land.
+
+Full Stack Engineer | $150-210K | SF-based
+Stack: TypeScript, Python, PostgreSQL, GraphQL, REST, Docker, AWS/GCP, AI Agents
+
+We're not looking for ""rockstars."" We want builders who ship clean code, own features end-to-end, and actually enjoy collaborating with product/design.
+
+No ghosting. Clear feedback. Direct line to hiring team.
+
+Link in comments 👇
+
+#SanFranciscoJobs #FullStackEngineer #TechHiring #SoftwareEngineer #AIEngineering #UCTalent #HiringNow","HIRING: Full Stack Software Engineer
+
+Stop being ghosted by job apps.
+AI matches you directly to hiring managers.
+
+📍 San Francisco, United States
+💰 $150,000-$210,000/annually
+
+Apply via Nhat - UCTalent
+uctalent.io","Apply directly via our AI Agent:
+https://uctalent.io/referral/BirthdayN/OzY8ZfBpIpa8-CIi2vG1g?utmsource=headhunter&utmmedium=referral","Apply directly via our AI Agent:
+https://uctalent.io/referral/BirthdayN/OzY8ZfBpIpa8-CIi2vG1g?utmsource=headhunter&utmmedium=referral","Apply ngay để AI Agent giúp bạn kết nối trực tiếp với hiring manager:
+https://uctalent.io/referral/BirthdayN/OzY8ZfBpIpa8-CIi2vG1g?utmsource=headhunter&utmmedium=referral",,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 Cpi27P4LdQPj3eiLy-dOe,Technical Lead (Golang),,1280.0,"32,000,000 VND",VND,"Ho Chi Minh City, Vietnam","Upto $3,500/monthly",normal,"Engineering Management,Corporate Services,Golang,AWS,Web3,Artificial Intelligence (AI),Blockchain","This Technical Lead/Director role at our client focuses on shaping the future of gaming infrastructure. It requires an 80% hands-on coding contribution using Golang and React/Angular, combined with 20% leadership in mentoring staff and advising the CEO on technical strategy.The ideal candidate will have 8+ years of software engineering experience, strong system design skills, and expertise in AWS environments, with a drive for AI-enabled workflows.","site:linkedin.com/in ""Technical Lead"" (""Golang"" OR ""Corporate Services"" OR ""Web3"" OR ""Artificial Intelligence (AI)"" OR ""Blockchain"") (""web3"" OR ""blockchain"" OR ""defi"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Technical Lead role based in Ho Chi Minh City, Vietnam (Upto $3,500/monthly), and your background seems like a great match.
@@ -38,7 +180,7 @@ Key skills we're looking for: Engineering Management, Corporate Services, Golang
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 UejO7nWYgCQXkUsGAophj,Tech Lead (Golang),,1280.0,"32,000,000 VND",VND,"Ho Chi Minh City, Vietnam","Upto ₫100,000,000/monthly",normal,"Engineering Management,Corporate Services,NoSQL,Golang,Ansible,Firebase,SQL,TypeScript","This high-impact, hands-on Technical Lead role at our client focuses on expanding and scaling a core live-streaming platform. As the Head of Technology, you will be the technical anchor for Backend and SRE functions, driving features from concept to deployment. Responsibilities include building, optimizing, and maintaining core infrastructure while leading and mentoring a high-performance engineering team.","site:linkedin.com/in ""Tech Lead"" (""Golang"" OR ""Corporate Services"" OR ""NoSQL"" OR ""Ansible"" OR ""Firebase"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Tech Lead role based in Ho Chi Minh City, Vietnam (Upto ₫100,000,000/monthly), and your background seems like a great match.
@@ -48,7 +190,7 @@ Key skills we're looking for: Engineering Management, Corporate Services, NoSQL.
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 ToRj-HGLn_36bGIlUEneQ,Full-Stack Software Engineer (AI-Driven Development – Claude Code),,1200.0,"$1,200",USD,,"Upto $4,000/monthly",normal,"Engineering,Software and IT Services,Artificial Intelligence (AI),Java,TypeScript,Vue,API,Next.js,React","We are a Berlin-based software company expanding our operations to Vietnam, and we are looking for a Full-Stack Software Engineer who actively integrates AI tools such as Claude Code and Cursor into their daily development workflow.In this role, you will leverage AI to accelerate development while maintaining high standards in system architecture, code quality, and long-term maintainability. You should be comfortable designing structured prompts, guiding AI-assisted implementations iteratively, and critically reviewing AI-generated code.This position is ideal for engineers who understand how to combine AI productivity with strong engineering judgment while contributing to the growth of a newly expanding engineering team in Vietnam.","site:linkedin.com/in ""Full-Stack Software Engineer"" (""Claude Code"" OR ""Artificial Intelligence (AI)"" OR ""Java"" OR ""TypeScript"" OR ""Next.js"") (""machine learning"" OR ""artificial intelligence"")","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Full-Stack Software Engineer role  (Upto $4,000/monthly), and your background seems like a great match.
@@ -58,7 +200,7 @@ Key skills we're looking for: Engineering, Software and IT Services, Artificial 
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 ftpTiTHE2Y3PYNVV6ynGc,Principal / Senior Software Engineer - E-commerce Product,,960.0,$960,USD,"Ho Chi Minh City, Vietnam",You will love it,normal,"Engineering,Software and IT Services,Application Programming Interface (API),Python,Azure,AWS,GCP,Node.js,Java","We’re a profitable company with ~$800M in revenue, growing quickly and executing a clear strategy toward $1B+. In Vietnam, we operate as a product-focused, lean team embedded with our US partners. This role is based in Ho Chi Minh City (Saigon) and works directly with the US team, focusing exclusively on the US market (not Vietnam).Work LocationThanh My Loi (Diamond Island), Ho Chi Minh City, VietnamThe OpportunityWe operate an engineering environment where speed is no longer limited by tooling—but by engineering judgment.Our development workflow is highly optimized, allowing engineers to ship, test, and debug significantly faster than in traditional teams. This creates a new standard: each engineer is expected to deliver more, move faster, and still maintain high-quality systems.You will be joining an experienced, fast-moving engineering team where systems are already running in production at scale. You will be contributing to and improving an existing system alongside strong engineers. This role works directly with our colleagues based in the US with the possibility for on-site training in the US.This role is designed for senior engineers (7+ years of experience) who have built and operated systems through the full development lifecycle—before modern acceleration tooling existed—and understand what “good” looks like at every layer: code, design, architecture, and production.In this environment:You’ve seen how systems break in production—and know how to prevent itYou’ve debugged issues the hard way—and can now resolve them faster with better toolsYou understand trade-offs—and can make decisions that scale beyond immediate requirementsModern tooling helps accelerate execution, but correctness, scalability, and maintainability still depend on your judgment.We are looking for engineers who can combine:Strong fundamentals built over years of experienceDeep system thinking and architectural awarenessThe ability to operate at high speed without losing control of the system","site:linkedin.com/in ""Senior Software Engineer"" (""Python"" OR ""Azure"" OR ""Node.js"" OR ""Java"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Principal / Senior Software Engineer - E-commerce Product role based in Ho Chi Minh City, Vietnam (You will love it), and your background seems like a great match.
@@ -68,8 +210,18 @@ Key skills we're looking for: Engineering, Software and IT Services, Application
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
-kiRplFCz750SvWEbC75WT,Full-stack Developer (Golang),https://uctalent.io/referral/BirthdayN/fwHFU1jHExURyvR_vzvov?utm_source=headhunter&utm_medium=referral,800.0,"20,000,000 VND",VND,"Ho Chi Minh City, Vietnam",You will love it,normal,"Engineering,Corporate Services,Golang,Artificial Intelligence (AI),REST API,AWS,Web3,Blockchain","Our client is seeking a Senior Full-stack Engineer to build technology powering the next generation of gaming experiences. The role involves solving complex technical challenges across backend, frontend, and cloud infrastructure, working closely with global teams to deliver reliable platforms at scale. Candidates should have 5+ years of experience and strong skills in Go, Java, Angular, React, and AWS.","site:linkedin.com/in ""Full-stack Developer"" (""Golang"" OR ""Corporate Services"" OR ""Artificial Intelligence (AI)"" OR ""REST API"" OR ""Web3"") (""machine learning"" OR ""artificial intelligence"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
+N2oBXDLc-ZNeY81FpHCge,Technical Architect (Javascript),,921.6,"23,040,000 VND",VND,"Ho Chi Minh City, Vietnam",You will love it,urgent,"Engineering Management,Software and IT Services,GraphSQL,Claude Agent SDK,React,NestJS,MongoDB,Next.js,DevOps,Node.js,Microservices,JavaScript,PostgreSQL,Github,Docker,AWS,Artificial Intelligence (AI),GitLab CI,GCP (Google cloud platform),Azure","Be involved in Technical Team, and work together with the Web team and also the Mobile team.Responsible for building up the system, architecture design, database design, and technology solutions for the project.Review code, and review solutions for the project.Solving technical issues, and developing workarounds and alternative solutions.Support, train, and build programmer’s skill in the company.Continuously research, evaluate, and implement new technologies to maximize development efficiencySalary: Open to discussHeadcounts: 3Product/ Projects Description: dự án về logistics trọng điểm của KH. Purpose of hiring: New hire.Report to: Report cho Solution Architect và Product Owner (khách hàng)Team size and structure: trung bình mỗi team dự án sẽ có 4 dev Junior, 2 dev Senior, 1 Technical Architect, 2 BA, 2 QC, 1 designer, 1 Scrum Master.","site:linkedin.com/in ""Technical Architect"" (""Javascript"" OR ""GraphSQL"" OR ""Claude Agent SDK"" OR ""React"" OR ""NestJS"") (""machine learning"" OR ""artificial intelligence"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
+
+I came across your profile and was impressed by your experience. We're currently hiring for a Technical Architect role based in Ho Chi Minh City, Vietnam (You will love it), and your background seems like a great match.
+
+Key skills we're looking for: Engineering Management, Software and IT Services, GraphSQL.
+
+Would you be open to a quick chat to explore this opportunity?
+
+Best regards,
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
+kiRplFCz750SvWEbC75WT,Full-stack Developer (Golang),,800.0,"20,000,000 VND",VND,"Ho Chi Minh City, Vietnam",You will love it,normal,"Engineering,Corporate Services,Golang,Artificial Intelligence (AI),REST API,AWS,Web3,Blockchain","Our client is seeking a Senior Full-stack Engineer to build technology powering the next generation of gaming experiences. The role involves solving complex technical challenges across backend, frontend, and cloud infrastructure, working closely with global teams to deliver reliable platforms at scale. Candidates should have 5+ years of experience and strong skills in Go, Java, Angular, React, and AWS.","site:linkedin.com/in ""Full-stack Developer"" (""Golang"" OR ""Corporate Services"" OR ""Artificial Intelligence (AI)"" OR ""REST API"" OR ""Web3"") (""machine learning"" OR ""artificial intelligence"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Full-stack Developer role based in Ho Chi Minh City, Vietnam (You will love it), and your background seems like a great match.
 
@@ -78,47 +230,7 @@ Key skills we're looking for: Engineering, Corporate Services, Golang.
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent","Stop optimizing for ATS keywords. Start building things that matter.
-
-Three years ago I was the one getting ghosted after 50+ applications. Could code circles around the requirements but didn't know how to package it. The rejection emails (when they came) said nothing useful.
-
-Now I'm on the other side — headhunting for UCTalent, building the platform I wish existed then. We're hiring a Full-stack Golang dev in HCMC to work on: AI matching engine, Web3 identity layer, REST APIs on AWS. Real engineering problems. No fake ""ninja/rockstar"" BS.
-
-The team is small. You'll own features end-to-end. Salary? You'll love it. Equity? On the table.
-
-We don't care about your degree. We care about what you've shipped, what you've broken, what you learned.
-
-Link in comments 👇
-
-#Web3Jobs #Golang #UCTalent","Most devs I know are great at code, terrible at selling themselves. Companies can't find talent. Both sides lose.
-
-We're hiring a Full-stack Golang dev in HCMC — AI, Web3, AWS, REST APIs. You build, we handle the noise.
-
-Link in comments 👇
-
-#Golang #Web3Jobs","Golang dev who wants to build AI + Web3 products that actually ship? 🚀
-
-We're not another outsourcing shop. UCTalent's core team — building a decentralized hiring protocol where candidates don't get ghosted and HR gets real matches.
-
-Stack: Go, REST APIs, AWS, AI integration, blockchain layer. You'll own features end-to-end, not just tickets.
-
-HCMC-based. Salary makes you smile. Equity on table.
-
-Link in comments 👇
-
-#Golang #Web3Jobs #AI #FullstackDeveloper #HoChiMinhCity #UCTalent #BlockchainDev","HIRING: Full-stack Developer
-
-Stop being ghosted by job apps.
-AI matches you directly to hiring managers.
-
-📍 Ho Chi Minh City, Vietnam
-💰 You will love it
-
-Apply via Nhat - UCTalent
-uctalent.io","Apply directly via our AI Agent — no middlemen, no ghosting:
-https://uctalent.io/referral/BirthdayN/fwHFU1jHExURyvRvzvov?utmsource=headhunter&utm_medium=referral","Apply directly:
-https://uctalent.io/referral/BirthdayN/fwHFU1jHExURyvRvzvov?utmsource=headhunter&utm_medium=referral","Apply ngay:
-https://uctalent.io/referral/BirthdayN/fwHFU1jHExURyvRvzvov?utmsource=headhunter&utm_medium=referral",,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 OMxWi78xlmZJetRSjlprO,"DevOps Engineer (Azure, Terraform, Kubernetes, Cloud, Git)",,800.0,$800,USD,"Ho Chi Minh City, Vietnam","$2,000-$2,500/monthly",normal,"DevOps,Software and IT Services,Kubernetes,Terraform,Conversion Rate Optimization (CRO),ArgoCD,Azure","For more than 40 years, we have been a global leader in technology and innovation, helping industries make smarter decisions for their critical assets. Our mission is simple: use technology to create a safer, more sustainable future for businesses, society, and the planet.With 4,000+ experts in over 110 countries, we deliver advanced asset integrity management solutions that combine engineering excellence with digital innovation. Our work ensures the safety and reliability of pipelines, storage tanks, and industrial facilities worldwide.Head Office: GermanyWhy Build Your Career with us in Vietnam?Vietnam is one of our key growth markets, and we are looking for talented software developers to join our global technology team. At company, you will:Work on Global Projects: Collaborate with international teams and contribute to solutions used by industries worldwide.Innovate with Purpose: Develop software that supports energy transition and sustainability.Enjoy Career Stability: Join a company with 45 years of trusted innovation, success and continuous growth.Learn and Grow: Access world-class training, mentorship, and opportunities to work with cutting-edge technologies.The company in Vietnam is a shared service center within the global Group, established in 2025, with the mission to provide specialized services to Group entities worldwide. Based in Vietnam, the center focuses on delivering capabilities in ILI and NDT data analytics, software development, data engineering, and building scalable digital solutions. By combining technical expertise with close collaboration across the Group, the company supports efficient, scalable, and high-quality service delivery to internal stakeholders.Our solutions integrate Big Data & AI for predictive analytics, cloud platforms for asset integrity, high-performance diagnostic software, and secure, scalable systems for global industrial clients.Our new project is a key pillar of our digital transformation strategy and focuses on cloud-native architectures, advanced AI models and a modern JavaScript technology stack to streamline workflows, modernize the portfolio, and revolutionize how we analyze and interpret pipeline integrity data. By leveraging machine learning, advanced data processing, and cutting-edge web technologies, we aim to significantly reduce cycle times, increase customer satisfaction, and provide an intuitive, seamless user experience.What you can expect﻿You will be responsible for designing, implementing, and maintaining cloud infrastructure, ensuring it meets the needs of the organization and supports the development and deployment of applications. You will collaborate closely with a team of skilled professionals, including cloud architects, software developers, and product owners, to develop and refine cloud solutions. This team-oriented environment fosters innovation and continuous improvement.","site:linkedin.com/in ""DevOps Engineer"" (""Azure"" OR ""Terraform"" OR ""Kubernetes"" OR ""Cloud"" OR ""Git"") (""german"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a DevOps Engineer role based in Ho Chi Minh City, Vietnam ($2,000-$2,500/monthly), and your background seems like a great match.
@@ -128,7 +240,7 @@ Key skills we're looking for: DevOps, Software and IT Services, Kubernetes.
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 V9S0THewbXVWkxgSjS7mM,AI Automation Developer,,800.0,$800,USD,"Ho Chi Minh City, Vietnam","$2,000-$4,500/monthly",normal,"Engineering,Software and IT Services,CI and CD,React,Azure,Node.js,Artificial Intelligence (AI),TypeScript,REST API,DevOps","For more than 40 years, we have been a global leader in technology and innovation, helping industries make smarter decisions for their critical assets. Our mission is simple: use technology to create a safer, more sustainable future for businesses, society, and the planet.With 4,000+ experts in over 110 countries, we deliver advanced asset integrity management solutions that combine engineering excellence with digital innovation. Our work ensures the safety and reliability of pipelines, storage tanks, and industrial facilities worldwide.Head Office: GermanyWork Location: Ung Van Khiem, Binh Thanh, Ho Chi Minh City, VietnamWhy Build Your Career with us in Vietnam?Vietnam is one of our key growth markets, and we are looking for talented software developers to join our global technology team. At company, you will:Work on Global Projects: Collaborate with international teams and contribute to solutions used by industries worldwide.Innovate with Purpose: Develop software that supports energy transition and sustainability.Enjoy Career Stability: Join a company with 45 years of trusted innovation, success and continuous growth.Learn and Grow: Access world-class training, mentorship, and opportunities to work with cutting-edge technologies.The company in Vietnam is a shared service center within the global Group, established in 2025, with the mission to provide specialized services to Group entities worldwide. Based in Vietnam, the center focuses on delivering capabilities in ILI and NDT data analytics, software development, data engineering, and building scalable digital solutions. By combining technical expertise with close collaboration across the Group, the company supports efficient, scalable, and high-quality service delivery to internal stakeholders.Our solutions integrate Big Data & AI for predictive analytics, cloud platforms for asset integrity, high-performance diagnostic software, and secure, scalable systems for global industrial clients.Are you passionate about transforming real business challenges into powerful AI-driven solutions? At the company, we are integrating Generative AI across our operational value chain to elevate efficiency, unlock new capabilities, and accelerate innovation. We are looking for a hands-on GenAI Developer who is excited to build, prototype, and deploy AI solutions that make a measurable impact on our daily operations. This is your opportunity to work close to the business, collaborate with domain experts, and turn ideas into production-ready solutions using the latest AI tools and technologies.","site:linkedin.com/in ""AI Automation Developer"" (""CI and CD"" OR ""React"" OR ""Azure"" OR ""Node.js"" OR ""Artificial Intelligence (AI)"") (""machine learning"" OR ""artificial intelligence"") (""german"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a AI Automation Developer role based in Ho Chi Minh City, Vietnam ($2,000-$4,500/monthly), and your background seems like a great match.
@@ -138,17 +250,7 @@ Key skills we're looking for: Engineering, Software and IT Services, CI and CD.
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
-Hbvz1RR6hAIUhTswDtjpq,"Fullstack Developer (React, NextJS, and TypeScript)",,800.0,$800,USD,"Ho Chi Minh City, Vietnam","$2,000-$2,500/monthly",normal,"Engineering,Software and IT Services,API,React,Kubernetes,JavaScript,CI and CD","For more than 40 years, we have been a global leader in technology and innovation, helping industries make smarter decisions for their critical assets. Our mission is simple: use technology to create a safer, more sustainable future for businesses, society, and the planet.With 4,000+ experts in over 110 countries, we deliver advanced asset integrity management solutions that combine engineering excellence with digital innovation. Our work ensures the safety and reliability of pipelines, storage tanks, and industrial facilities worldwide.Head Office: GermanyWhy Build Your Career with us in Vietnam?Vietnam is one of our key growth markets, and we are looking for talented software developers to join our global technology team. At company, you will:Work on Global Projects: Collaborate with international teams and contribute to solutions used by industries worldwide.Innovate with Purpose: Develop software that supports energy transition and sustainability.Enjoy Career Stability: Join a company with 45 years of trusted innovation, success and continuous growth.Learn and Grow: Access world-class training, mentorship, and opportunities to work with cutting-edge technologies.The company in Vietnam is a shared service center within the global Group, established in 2025, with the mission to provide specialized services to Group entities worldwide. Based in Vietnam, the center focuses on delivering capabilities in ILI and NDT data analytics, software development, data engineering, and building scalable digital solutions. By combining technical expertise with close collaboration across the Group, the company supports efficient, scalable, and high-quality service delivery to internal stakeholders.Our solutions integrate Big Data & AI for predictive analytics, cloud platforms for asset integrity, high-performance diagnostic software, and secure, scalable systems for global industrial clients.Our new project is a key pillar of our digital transformation strategy and focuses on cloud-native architectures, advanced AI models and a modern JavaScript technology stack to streamline workflows, modernize the portfolio, and revolutionize how we analyze and interpret pipeline integrity data. By leveraging machine learning, advanced data processing, and cutting-edge web technologies, we aim to significantly reduce cycle times, increase customer satisfaction, and provide an intuitive, seamless user experience.","site:linkedin.com/in ""Fullstack Developer"" (""React"" OR ""NextJS"" OR ""TypeScript"" OR ""Kubernetes"" OR ""JavaScript"") (""german"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
-
-I came across your profile and was impressed by your experience. We're currently hiring for a Fullstack Developer role based in Ho Chi Minh City, Vietnam ($2,000-$2,500/monthly), and your background seems like a great match.
-
-Key skills we're looking for: Engineering, Software and IT Services, API.
-
-Would you be open to a quick chat to explore this opportunity?
-
-Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 yqE5niYDi3q9FvttBjWKa,Cloud Engineer (Azure),,800.0,$800,USD,"Ho Chi Minh City, Vietnam","$2,000-$2,500/monthly",normal,"DevOps,Software and IT Services,ArgoCD,Terraform,CI and CD,Python","About companyFor more than 40 years, we have been a global leader in technology and innovation, helping industries make smarter decisions for their critical assets. Our mission is simple: use technology to create a safer, more sustainable future for businesses, society, and the planet.With 4,000+ experts in over 110 countries, we deliver advanced asset integrity management solutions that combine engineering excellence with digital innovation. Our work ensures the safety and reliability of pipelines, storage tanks, and industrial facilities worldwide.Head Office: GermanyWhy Build Your Career with us in Vietnam?Vietnam is one of our key growth markets, and we are looking for talented software developers to join our global technology team. At company, you will:Work on Global Projects: Collaborate with international teams and contribute to solutions used by industries worldwide.Innovate with Purpose: Develop software that supports energy transition and sustainability.Enjoy Career Stability: Join a company with 45 years of trusted innovation, success and continuous growth.Learn and Grow: Access world-class training, mentorship, and opportunities to work with cutting-edge technologies.The company in Vietnam is a shared service center within the global Group, established in 2025, with the mission to provide specialized services to Group entities worldwide. Based in Vietnam, the center focuses on delivering capabilities in ILI and NDT data analytics, software development, data engineering, and building scalable digital solutions. By combining technical expertise with close collaboration across the Group, the company supports efficient, scalable, and high-quality service delivery to internal stakeholders.Our solutions integrate Big Data & AI for predictive analytics, cloud platforms for asset integrity, high-performance diagnostic software, and secure, scalable systems for global industrial clients.Our new projectis a key pillar of our digital transformation strategy and focuses on cloud-native architectures, advanced AI models and a modern JavaScript technology stack to streamline workflows, modernize the portfolio, and revolutionize how we analyze and interpret pipeline integrity data. By leveraging machine learning, advanced data processing, and cutting-edge web technologies, we aim to significantly reduce cycle times, increase customer satisfaction, and provide an intuitive, seamless user experience.What you can expectAs a Cloud Engineer, you will be responsible for designing, setting up, and operating our Core Cloud Infrastructure. Additionally, you will integrate cloud services into our Developer Platform, incorporating FinOps practices to ensure cost-effective and efficient cloud operations.","site:linkedin.com/in ""Cloud Engineer"" (""Azure"" OR ""DevOps"" OR ""ArgoCD"" OR ""Terraform"" OR ""CI and CD"") (""german"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Cloud Engineer role based in Ho Chi Minh City, Vietnam ($2,000-$2,500/monthly), and your background seems like a great match.
@@ -158,7 +260,7 @@ Key skills we're looking for: DevOps, Software and IT Services, ArgoCD.
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 nOCiEs5sx_M0bP4hSfAHi,Senior HR Business Partner (HRBP) / HR Director,,640.0,"16,000,000 VND",VND,"Da Nang, Vietnam",You will love it,normal,"Human Resource (HR),Software and IT Services,Organization,Change Management,Leadership,Performance Management,Recruitment and Talent Acquisition,Artificial Intelligence (AI)","As a strategic HR leader for a high-growth, High-Tech Impact Ecosystem specializing in Climate-tech, Agritech, and Biotech, you will architect a sustainable talent ecosystem that attracts, nurtures, and retains elite innovators. Your core mission is to lead organizational design, scale human capital, and manage complex restructuring as the company preparesmultiple high-tech spin-offs (Energy, Agriculture, Deep-Tech Engineering). You will tackle the ongoing challenge of continuous talent development, drive leadership acquisition, and embed a high-performance, purpose-driven culture dedicated to sustainable solutions and impactful investment projects.","site:linkedin.com/in ""Senior HR Business Partner"" (""HRBP"" OR ""Human Resource (HR)"" OR ""Organization"" OR ""Change Management"" OR ""Leadership"") ""Da Nang, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Senior HR Business Partner  / HR Director role based in Da Nang, Vietnam (You will love it), and your background seems like a great match.
@@ -168,7 +270,7 @@ Key skills we're looking for: Human Resource (HR), Software and IT Services, Org
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 QNe57AY842QeFhZbb09eB,Senior Product Owner - LiveOps Team,,640.0,$640,USD,"Ho Chi Minh City, Vietnam",You will love it,normal,"Product,Software and IT Services,Game Development,Wireframing,Product Strategy,Product Management,Data Driven Decision,Product Development","Tiles Hop and Dancing Road is a top-ranked music games with a passionate global audience. As a Senior Product Owner – LiveOps, you will play a pivotal role in shaping and growing Tiles Hop and Dancing Road — games that have already reached millions of players globally. This role is for someone who’s not only passionate about games, but also thrives in data-driven decision-making, rapid experimentation, and cross-functional collaboration. You’ll be empowered to define the product vision, own the roadmap, and drive performance across retention, monetization, and user satisfaction.Interview Process -3 rounds:1st interview with TACase Study - Technical Interview with Line ManagerFinal Interview with Game DirectorNote for recruiterOnsite positionHighly prefer candidates who can play music and/or have experience with music gamesFluency in English","site:linkedin.com/in ""Senior Product Owner"" (""Game Development"" OR ""Wireframing"" OR ""Product Strategy"" OR ""Product Management"" OR ""Data Driven Decision"") (""gaming"" OR ""game development"") (""english"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Senior Product Owner - LiveOps Team role based in Ho Chi Minh City, Vietnam (You will love it), and your background seems like a great match.
@@ -178,8 +280,8 @@ Key skills we're looking for: Product, Software and IT Services, Game Developmen
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
-WQAmvhUAhTdmR3ZP_Dp-R,Scrum Master (Senior),https://uctalent.io/referral/BirthdayN/Ey8JbW3Ul9_5u2NXkU0pQ?utm_source=headhunter&utm_medium=referral,614.4,"15,360,000 VND",VND,"Ho Chi Minh City, Vietnam",You will love it,urgent,"Operation,Software and IT Services,Agile,Conflict Resolution,Scrum,Communication Skills,Stakeholder management","Responsible for helping project members perform their roles according to the Agile principlesHelping the Development Team to create high-value productsFacilitate scrum ceremonies (stand-up, sprint planning, sprint review/showcase, sprint retrospective) for 1-2 squadsDiscuss open issues, status and roll forward action items (focus on process-oriented issues)Map out execution plans and communicate roles, responsibilities, objectives, commitments, deliverables and schedules for tribes and squadsSupport Product Owners on features backlog, prioritization and release planning that will realise the greatest business valueGuide teams for continuous improvement momentum and clear obstacles to help them meet delivery timelinesSalary: Open to discussHeadcounts: 5Team size and structure: trung bình mỗi team dự án sẽ có 4 dev Junior, 2 dev Senior, 1 Technical Architect, 2 BA, 2 QC, 1 designer, 1 Scrum Master","site:linkedin.com/in ""Scrum Master"" (""Operation"" OR ""Agile"" OR ""Conflict Resolution"" OR ""Scrum"" OR ""Communication Skills"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
+WQAmvhUAhTdmR3ZP_Dp-R,Scrum Master (Senior),,614.4,"15,360,000 VND",VND,"Ho Chi Minh City, Vietnam",You will love it,urgent,"Operation,Software and IT Services,Agile,Conflict Resolution,Scrum,Communication Skills,Stakeholder management","Responsible for helping project members perform their roles according to the Agile principlesHelping the Development Team to create high-value productsFacilitate scrum ceremonies (stand-up, sprint planning, sprint review/showcase, sprint retrospective) for 1-2 squadsDiscuss open issues, status and roll forward action items (focus on process-oriented issues)Map out execution plans and communicate roles, responsibilities, objectives, commitments, deliverables and schedules for tribes and squadsSupport Product Owners on features backlog, prioritization and release planning that will realise the greatest business valueGuide teams for continuous improvement momentum and clear obstacles to help them meet delivery timelinesSalary: Open to discussHeadcounts: 5Team size and structure: trung bình mỗi team dự án sẽ có 4 dev Junior, 2 dev Senior, 1 Technical Architect, 2 BA, 2 QC, 1 designer, 1 Scrum Master","site:linkedin.com/in ""Scrum Master"" (""Operation"" OR ""Agile"" OR ""Conflict Resolution"" OR ""Scrum"" OR ""Communication Skills"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Scrum Master role based in Ho Chi Minh City, Vietnam (You will love it), and your background seems like a great match.
 
@@ -188,43 +290,7 @@ Key skills we're looking for: Operation, Software and IT Services, Agile.
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent","Most Scrum Masters I meet are tired. Not from ceremonies — from being the shield everyone hides behind while nothing actually changes.
-
-I've placed three Senior SMs this quarter. The ones who stick? They don't ""facilitate."" They unblock. They tell the PO their backlog is garbage. They call out the VP when sprint goals become wishlists. They make Agile mean something again.
-
-This role in HCMC? The team is sharp. The product has real users. The salary? You'll love it. But they need someone who'll fight for flow, not just run standups.
-
-If you've ever wanted to quit because leadership treated Scrum as theater — this is your exit.
-
-Link in comments
-
-#ScrumMaster #Agile #Hiring","Most Scrum Masters just run ceremonies. The good ones unblock teams before they even ask.
-
-Senior SM role in HCMC — agile, stakeholder mgmt, conflict resolution. No corporate theater. Just ship.
-
-Link in comments 👇
-
-#ScrumMaster #Hiring","Your team ships. But does it flow? 🚀
-
-Senior Scrum Master needed in HCMC. Not for ceremonies — for impact. You unblock, align stakeholders, and turn chaos into velocity. Conflict resolution? Daily bread. Agile isn't a framework to you. It's how you think.
-
-Salary: You'll love it.
-
-Link in comments 👇
-
-#ScrumMaster #Agile #TechJobsVietnam #HCMC #SeniorRole #UCTalent","HIRING: Scrum Master
-
-Stop being ghosted by job apps.
-AI matches you directly to hiring managers.
-
-📍 Ho Chi Minh City, Vietnam
-💰 You will love it
-
-Apply via Nhat - UCTalent
-uctalent.io","Apply directly via our AI Agent — no middlemen, no ghosting:
-https://uctalent.io/referral/BirthdayN/Ey8JbW3Ul95u2NXkU0pQ?utmsource=headhunter&utm_medium=referral","Apply directly:
-https://uctalent.io/referral/BirthdayN/Ey8JbW3Ul95u2NXkU0pQ?utmsource=headhunter&utm_medium=referral","Apply ngay:
-https://uctalent.io/referral/BirthdayN/Ey8JbW3Ul95u2NXkU0pQ?utmsource=headhunter&utm_medium=referral",,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 KbEBq4Z3lcSxwj4Cid1DO,Lead Multimedia Designer - Mobile Games,,512.0,"12,800,000 VND",VND,"Ho Chi Minh City, Vietnam","₫50,000,000-₫65,000,000/monthly",normal,"Design,Software and IT Services,Motion Graphics,Leadership,Graphic Design,Adobe After Effects,Adobe Photoshop,Artificial Intelligence (AI),Project Management,Team Management","We operate a portfolio of music games reaching hundreds of millions of users worldwide. The Marketing Creative team produces high-volume creative for paid User Acquisition across platforms like Mintegral, Applovin, Unity Ads, and TikTok — with formats spanning video ads, playable ads, banner/static, and store assets.As Lead Multimedia Designer, you will play a key role in shaping how the Marketing Creative team turns ideas into high-quality output at speed.This role sits at the center of creative execution, production operations, and cross-functional collaboration.You will lead a team of around 20+ Designers and Account members, working closely with the Creative Manager and partner teams to turn priorities into clear plans, keep production moving smoothly, and continuously improve how the team delivers.This is a strong fit for someone who can bring structure, clarity, and momentum to a fast-moving creative environment, while helping the team scale quality output over time.","site:linkedin.com/in ""Lead Multimedia Designer"" (""Motion Graphics"" OR ""Leadership"" OR ""Graphic Design"" OR ""Adobe After Effects"" OR ""Adobe Photoshop"") (""machine learning"" OR ""artificial intelligence"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Lead Multimedia Designer - Mobile Games role based in Ho Chi Minh City, Vietnam (₫50,000,000-₫65,000,000/monthly), and your background seems like a great match.
@@ -234,7 +300,7 @@ Key skills we're looking for: Design, Software and IT Services, Motion Graphics.
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
 AK0ELePywZOrlyLmsqn5g,Trưởng phòng Kế toán quản trị - Management Accounting Manager,,384.0,"9,600,000 VND",VND,"Ho Chi Minh City, Vietnam",You will love it,normal,"Finance,Software and IT Services,Financial Management,Financial Reporting,Budgeting,Management",FMCG,"site:linkedin.com/in ""Trưởng phòng Kế toán"" (""Finance"" OR ""Financial Management"" OR ""Financial Reporting"" OR ""Budgeting"") ""Ho Chi Minh City, Vietnam""","Hi [FirstName],
 
 I came across your profile and was impressed by your experience. We're currently hiring for a Trưởng phòng Kế toán quản trị - Management Accounting Manager role based in Ho Chi Minh City, Vietnam (You will love it), and your background seems like a great match.
@@ -244,4 +310,4 @@ Key skills we're looking for: Finance, Software and IT Services, Financial Manag
 Would you be open to a quick chat to explore this opportunity?
 
 Best regards,
-Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-08 14:05,2026-07-09 12:11
+Nhat - UCTalent",,,,,,,,,pending,pending,pending,2026-07-09 12:30,2026-07-13 14:10
