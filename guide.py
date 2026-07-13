@@ -584,18 +584,34 @@ def generate_outreach_for_job(num, job, csv_file, rows, fieldnames):
     print("=" * 70)
     print()
     
-    # Import and run generation
     sys.path.insert(0, '.')
     try:
-        from linkedin_outreach import generate_outreach_message, fetch_job_description, load_config
+        from linkedin_outreach import (
+            load_config, clean_content,
+            generate_with_nvidia, generate_with_qwen, generate_with_gemini,
+            generate_outreach_message, fetch_job_description
+        )
         
         config = load_config()
-        desc = fetch_job_description(job['id'], job['title'])
-        tags = job.get('tags', '').split(',') if job.get('tags') else []
-        referral_link = job.get('referral_link', '')
-        clean_link = referral_link if referral_link and referral_link not in ['', '[MANUAL_PASTE]', '[REFERRAL_LINK]', '[NO_LINK]'] else ''
+        message = None
         
-        message = generate_outreach_message(job['title'], desc, job.get('location', ''), job.get('salary', ''), tags, clean_link, config.get('name'))
+        # Try AI first (NVIDIA → Qwen → Gemini)
+        if config.get('use_nvidia', False):
+            message = generate_with_nvidia(job, job.get('referral_link', ''), config, 'outreach_message')
+        if not message and config.get('use_qwen', False):
+            message = generate_with_qwen(job, job.get('referral_link', ''), config, 'outreach_message')
+        if not message and config.get('use_gemini', False):
+            message = generate_with_gemini(job, job.get('referral_link', ''), config, 'outreach_message')
+        
+        # Fallback to template if AI not available
+        if not message:
+            desc = fetch_job_description(job['id'], job['title'])
+            tags = job.get('tags', '').split(',') if job.get('tags') else []
+            referral_link = job.get('referral_link', '')
+            clean_link = referral_link if referral_link and referral_link not in ['', '[MANUAL_PASTE]', '[REFERRAL_LINK]', '[NO_LINK]'] else ''
+            message = generate_outreach_message(job['title'], desc, job.get('location', ''), job.get('salary', ''), tags, clean_link, config.get('name'))
+        else:
+            message = clean_content(message.strip())
         
         # Update job
         for r in rows:
@@ -607,8 +623,11 @@ def generate_outreach_for_job(num, job, csv_file, rows, fieldnames):
         print("  ✅ Outreach message generated!")
         print()
         print("  " + "-" * 60)
-        print(message[:300] + "..." if len(message) > 300 else message)
+        for line in message.split('\n'):
+            print(f"  {line}")
         print("  " + "-" * 60)
+        print()
+        print("  💡 Not happy? Run option 7 to regenerate with AI.")
     except Exception as e:
         print(f"  ⚠️  Error: {e}")
 
