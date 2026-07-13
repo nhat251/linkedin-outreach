@@ -424,6 +424,7 @@ def generate_with_qwen(job, referral_link, config, content_type):
         'x_post': x_post_prompt,
         'facebook_post': facebook_post_prompt,
         'linkedin_message': linkedin_message_prompt,
+        'outreach_message': linkedin_message_prompt,
         'x_message': x_message_prompt
     }
     
@@ -448,6 +449,7 @@ def generate_with_nvidia(job, referral_link, config, content_type):
         'x_post': x_post_prompt,
         'facebook_post': facebook_post_prompt,
         'linkedin_message': linkedin_message_prompt,
+        'outreach_message': linkedin_message_prompt,
         'x_message': x_message_prompt
     }
     
