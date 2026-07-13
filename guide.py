@@ -793,18 +793,81 @@ def send_outreach(num, job, csv_file, rows, fieldnames):
         print("  ⚠️  No profiles found. Do step 5 first.")
         return
     
-    print()
-    msg = job.get('outreach_message', 'No message')
-    print("  📝 Full Message (copy from below):")
-    print("  " + "=" * 66)
-    for line in msg.split('\n'):
-        print(f"  {line}")
-    print("  " + "=" * 66)
-    print()
+    # Show current message
+    msg = job.get('outreach_message', '')
+    if msg:
+        print()
+        print("  📝 Current Message:")
+        print("  " + "=" * 66)
+        for line in msg.split('\n'):
+            print(f"  {line}")
+        print("  " + "=" * 66)
+        print()
+    
+    # Ask to regenerate
+    regen = input("  Regenerate message? (y/n): ").strip().lower()
+    if regen == 'y':
+        print("  🔄 Regenerating...")
+        sys.path.insert(0, '.')
+        try:
+            from linkedin_outreach import load_config, clean_content
+            from linkedin_outreach import generate_with_nvidia, generate_with_qwen, generate_with_gemini
+            
+            config = load_config()
+            new_msg = None
+            
+            # Try AI (NVIDIA → Qwen → Gemini)
+            if config.get('use_nvidia', False):
+                new_msg = generate_with_nvidia(job, job.get('referral_link', ''), config, 'outreach_message')
+            if not new_msg and config.get('use_qwen', False):
+                new_msg = generate_with_qwen(job, job.get('referral_link', ''), config, 'outreach_message')
+            if not new_msg and config.get('use_gemini', False):
+                new_msg = generate_with_gemini(job, job.get('referral_link', ''), config, 'outreach_message')
+            
+            if new_msg:
+                new_msg = clean_content(new_msg.strip())
+                # Update job in memory
+                job['outreach_message'] = new_msg
+                for r in rows:
+                    if r.get('title', '').strip().lower() == job['title'].strip().lower():
+                        r['outreach_message'] = new_msg
+                        break
+                save_csv_jobs(csv_file, rows, fieldnames)
+                print()
+                print("  ✅ New message generated!")
+                print("  " + "=" * 66)
+                for line in new_msg.split('\n'):
+                    print(f"  {line}")
+                print("  " + "=" * 66)
+            else:
+                print("  ⚠️  AI not available. Using template-based message.")
+                from linkedin_outreach import generate_outreach_message, fetch_job_description
+                desc = fetch_job_description(job['id'], job['title'])
+                tags = job.get('tags', '').split(',') if job.get('tags') else []
+                new_msg = generate_outreach_message(
+                    job['title'], desc, job.get('location', ''),
+                    job.get('salary', ''), tags,
+                    job.get('referral_link', ''), config.get('name')
+                )
+                job['outreach_message'] = new_msg
+                for r in rows:
+                    if r.get('title', '').strip().lower() == job['title'].strip().lower():
+                        r['outreach_message'] = new_msg
+                        break
+                save_csv_jobs(csv_file, rows, fieldnames)
+                print()
+                print("  ✅ Message regenerated!")
+                print("  " + "=" * 66)
+                for line in new_msg.split('\n'):
+                    print(f"  {line}")
+                print("  " + "=" * 66)
+        except Exception as e:
+            print(f"  ⚠️  Error regenerating: {e}")
+        print()
+    
     print("  ⚠️  LIMITS: Max 20-25/day, wait 2-3 min between each")
     print()
-    
-    confirm = input("Mark as sent? (y/n): ").strip().lower()
+    confirm = input("  Mark as sent? (y/n): ").strip().lower()
     if confirm == 'y':
         job['connect_status'] = 'sent'
         save_csv_jobs(csv_file, rows, fieldnames)
