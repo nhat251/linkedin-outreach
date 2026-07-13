@@ -284,7 +284,7 @@ def linkedin_post_prompt(job, referral_link, config):
     
     system_prompt = build_qwen_system_prompt(config)
     
-    user_prompt = f"""Write a LinkedIn post for a job opportunity:
+    user_prompt = f"""Write a LinkedIn post as a headhunter/recruiter about a CLIENT's job opening:
 
 Job: {title}
 Location: {location}
@@ -292,13 +292,14 @@ Salary: {salary}
 Skills: {tags}
 
 Requirements:
+- You are a headhunter helping a CLIENT fill this role — NOT hiring for your own company
 - Write in English
 - Hook: Short, attention-grabbing, use your real voice
-- Body: Brief but compelling, tell a story
+- Body: Brief but compelling, describe the opportunity
 - CTA: Say "Link in comments" — do NOT include any URL in the post body
 - Include 1-3 relevant hashtags
 - Keep under 2000 characters
-- Write naturally like you're typing to a peer, not a marketing team
+- Write naturally like you're sharing an opportunity, not a marketing team
 
 Write ONE post only. No explanations."""
     
@@ -314,13 +315,14 @@ def x_post_prompt(job, referral_link, config):
     
     system_prompt = build_qwen_system_prompt(config)
     
-    user_prompt = f"""Write a short X/Twitter post for a job opportunity:
+    user_prompt = f"""Write a short X/Twitter post as a headhunter/recruiter about a CLIENT's job opening:
 
 Job: {title}
 Location: {location}
 Skills: {tags}
 
 Requirements:
+- You are a headhunter helping a CLIENT fill this role — NOT hiring for your own company
 - Write in English
 - Hook: Attention-grabbing, your real voice
 - Body: Brief, punchy, max 200 characters
@@ -342,7 +344,7 @@ def facebook_post_prompt(job, referral_link, config):
     
     system_prompt = build_qwen_system_prompt(config)
     
-    user_prompt = f"""Write a Facebook post for a job opportunity:
+    user_prompt = f"""Write a Facebook post as a headhunter/recruiter about a CLIENT's job opening:
 
 Job: {title}
 Location: {location}
@@ -350,6 +352,7 @@ Salary: {salary}
 Skills: {tags}
 
 Requirements:
+- You are a headhunter helping a CLIENT fill this role — NOT hiring for your own company
 - Write in English
 - Hook: Short, attention-grabbing
 - Body: Brief but compelling
@@ -371,7 +374,7 @@ def linkedin_message_prompt(job, referral_link, config):
     
     system_prompt = build_qwen_system_prompt(config)
     
-    user_prompt = f"""Write a LinkedIn connection request message for a job opportunity:
+    user_prompt = f"""Write a LinkedIn connection request message as a headhunter/recruiter for a CLIENT's job opening:
 
 Job: {title}
 Location: {location}
@@ -379,10 +382,11 @@ Salary: {salary}
 Skills: {tags}
 
 Requirements:
+- You are a headhunter helping a CLIENT fill this role — NOT hiring for your own company
 - Short (under 300 characters)
 - This is the SAME message you'll send to multiple candidates for this job
 - Focus on the JOB opportunity, not their specific profile
-- Sound like a real founder reaching out, not a templated message
+- Sound professional and helpful, like a recruiter reaching out
 - Include a subtle call to action
 
 Write ONE message only. No explanations."""
@@ -397,14 +401,15 @@ def x_message_prompt(job, referral_link, config):
     
     system_prompt = build_qwen_system_prompt(config)
     
-    user_prompt = f"""Write a short X/Twitter DM message for a job opportunity:
+    user_prompt = f"""Write a short X/Twitter DM message as a headhunter/recruiter for a CLIENT's job opening:
 
 Job: {title}
 Location: {location}
 
 Requirements:
+- You are a headhunter helping a CLIENT fill this role — NOT hiring for your own company
 - Very short (under 200 characters)
-- Sound like a real founder, not a bot
+- Sound professional and helpful, like a recruiter reaching out
 - Include a subtle call to action
 
 Write ONE message only. No explanations."""
@@ -562,13 +567,14 @@ def generate_with_gemini(job, referral_link, config, content_type):
             tags = ', '.join(found[:5]) if found else 'Relevant tech skills'
     
     if content_type == 'linkedin_post':
-        user_prompt = f"""Write a LinkedIn post for a job opportunity:
+        user_prompt = f"""Write a LinkedIn post as a headhunter/recruiter about a CLIENT's job opening:
 
 Job: {title}
 Location: {location}
 Skills (INCLUDE AT LEAST 2): {tags}
 
 Requirements:
+- You are a headhunter helping a CLIENT fill this role — NOT hiring for your own company
 - Write in English
 - Hook: Short, attention-grabbing
 - Body: Brief but compelling
@@ -580,13 +586,14 @@ Requirements:
 Write ONE post only. No explanations."""
         
     elif content_type == 'x_post':
-        user_prompt = f"""Write a short X/Twitter post for a job opportunity:
+        user_prompt = f"""Write a short X/Twitter post as a headhunter/recruiter about a CLIENT's job opening:
 
 Job: {title}
 Location: {location}
 Skills: {tags}
 
 Requirements:
+- You are a headhunter helping a CLIENT fill this role — NOT hiring for your own company
 - Write in English
 - Hook: Attention-grabbing, short
 - Body: Brief, punchy, max 200 characters
@@ -597,13 +604,14 @@ Requirements:
 Write ONE tweet only. No explanations."""
         
     elif content_type == 'facebook_post':
-        user_prompt = f"""Write a Facebook post for a job opportunity:
+        user_prompt = f"""Write a Facebook post as a headhunter/recruiter about a CLIENT's job opening:
 
 Job: {title}
 Location: {location}
 Skills: {tags}
 
 Requirements:
+- You are a headhunter helping a CLIENT fill this role — NOT hiring for your own company
 - Write in English
 - Hook: Short, attention-grabbing
 - Body: Brief but compelling
@@ -613,7 +621,7 @@ Requirements:
 Write ONE post only. No explanations."""
         
     elif content_type == 'outreach_message':
-        user_prompt = f"""Write a LinkedIn connection request message for a job opportunity:
+        user_prompt = f"""Write a LinkedIn connection request message as a headhunter/recruiter for a CLIENT's job opening:
 
 Job: {title}
 Location: {location}
@@ -621,10 +629,11 @@ Salary: {salary}
 Skills: {tags}
 
 Requirements:
+- You are a headhunter helping a CLIENT fill this role — NOT hiring for your own company
 - Short (under 300 characters)
 - This is the SAME message you'll send to multiple candidates for this job
 - Focus on the JOB opportunity, not their specific profile
-- Sound like a real founder reaching out, not a templated message
+- Sound professional and helpful, like a recruiter reaching out
 - Include a subtle call to action
 
 Write ONE message only. No explanations."""
@@ -1219,9 +1228,9 @@ def generate_outreach_message(job_title, job_description, location, salary, tags
     
     return f"""Hi [FirstName],
 
-I came across your profile and was impressed by your experience. We're currently hiring for a {clean_title} role {location_line}{salary_line}, and your background seems like a great match.
+I came across your profile and was impressed by your experience. I'm a headhunter helping a client fill a {clean_title} role {location_line}{salary_line}, and your background seems like a great match.
 
-Key skills we're looking for: {skills_str}.
+Key skills they're looking for: {skills_str}.
 
 Would you be open to a quick chat to explore this opportunity?
 
