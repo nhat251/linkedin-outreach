@@ -168,10 +168,12 @@ def main():
         print(f"  3. Saving to job: {job_title}")
     print()
     
-    confirm = input("Extract profiles? (y/n): ").strip().lower()
-    if confirm != 'y':
-        print("Cancelled.")
-        return
+    # When called from guide.py with a job title, skip the y/n (already confirmed there)
+    if not job_title:
+        confirm = input("Extract profiles? (y/n): ").strip().lower()
+        if confirm != 'y':
+            print("Cancelled.")
+            return
     
     # Step 1: Extract from page 1
     print("\nExtracting LinkedIn URLs from page 1...")

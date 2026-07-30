@@ -238,7 +238,6 @@ def main():
     
     print()
     print("  💡 Keep your normal tabs open — looks more natural")
-    wait()
 
     # ─── STEP 2: Fetch Jobs ─────────────────────────────────────────────────
     clear()
@@ -260,8 +259,6 @@ def main():
     else:
         print("  Skipped.")
     
-    wait()
-
     # ─── STEP 3: Work on Individual Jobs ────────────────────────────────────
     while True:
         clear()
@@ -452,7 +449,6 @@ def work_on_job_menu(num, job, xlsx_file, rows, fieldnames):
     
     # Save after auto-preparation
     save_xlsx_jobs(xlsx_file, rows, fieldnames)
-    input("\nPress Enter to continue to menu...")
     
     # Now show menu
     while True:
@@ -723,7 +719,6 @@ def open_search(num, job, xlsx_file, rows, fieldnames):
     print("  ✅ Search opened in new Chrome tab")
     print()
     print("  Next step: Browse results, then run option 5 to extract LinkedIn profiles")
-    input("\nPress Enter to continue...")
 
 
 def extract_profiles(num, job, xlsx_file, rows, fieldnames):
