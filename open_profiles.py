@@ -121,7 +121,7 @@ def save_profiles_to_xlsx(job_title, urls):
     saved = False
     for row in rows:
         title = row.get('title', '').strip().lower()
-        if job_title and job_title.lower() in title:
+        if job_title and title == job_title.lower():
             existing = row.get('linkedin_profiles', '')
             if existing:
                 # Append unique URLs (normalize existing URLs too)
