@@ -11,13 +11,15 @@ import io
 import json
 import glob
 import time
-import csv
 import urllib.parse
 import subprocess
 import re
 
 # Content style system
 from content_styles import get_style, list_styles, STYLES, DEFAULT_STYLE, choose_style_interactive
+
+# XLSX storage
+from xlsx_utils import read_xlsx, write_xlsx, clear_xlsx, get_xlsx_path
 
 # Windows compatibility: Chrome automation via CDP
 from chrome_utils import (
@@ -65,34 +67,30 @@ def run_applescript(script, timeout=10):
     return _bridge(script, timeout=timeout)
 
 
-def get_latest_csv():
-    """Get the single persistent CSV file"""
-    csv_file = 'uctalent_jobs.csv'
-    if os.path.exists(csv_file):
-        return csv_file
-    return None
+def get_latest_xlsx():
+    """Get the single persistent XLSX file path"""
+    return get_xlsx_path()
 
 
-def read_csv_jobs(csv_file):
-    """Read jobs from CSV with status tracking"""
-    if not csv_file or not os.path.exists(csv_file):
+def read_xlsx_jobs(xlsx_file):
+    """Read jobs from XLSX with status tracking.
+    Returns (list_of_dict_rows, fieldnames) — same interface as old read_csv_jobs.
+    """
+    if not xlsx_file or not os.path.exists(xlsx_file):
         return [], []
     
-    with open(csv_file, 'r', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-        fieldnames = reader.fieldnames
+    rows, fieldnames = read_xlsx(xlsx_file)
     
-    # Add status columns if not exist
+    # Ensure required columns exist
+    fieldnames_list = list(fieldnames) if fieldnames else []
     for col in ['status', 'connect_status', 'message_status']:
-        if col not in fieldnames:
-            fieldnames.append(col)
+        if col not in fieldnames_list:
+            fieldnames_list.append(col)
             for row in rows:
                 row[col] = 'pending'
     
-    # Add linkedin_profiles column if not exist
-    if 'linkedin_profiles' not in fieldnames:
-        fieldnames.append('linkedin_profiles')
+    if 'linkedin_profiles' not in fieldnames_list:
+        fieldnames_list.append('linkedin_profiles')
         for row in rows:
             row['linkedin_profiles'] = ''
     
@@ -103,18 +101,15 @@ def read_csv_jobs(csv_file):
             normalized = [normalize_linkedin_url(u) for u in urls]
             row['linkedin_profiles'] = ','.join(normalized)
     
-    return rows, fieldnames
+    return rows, fieldnames_list
 
 
-def save_csv_jobs(csv_file, rows, fieldnames):
-    """Save jobs back to CSV"""
+def save_xlsx_jobs(xlsx_file, rows, fieldnames):
+    """Save jobs back to XLSX"""
     try:
-        with open(csv_file, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(rows)
+        write_xlsx(xlsx_file, rows, fieldnames)
     except PermissionError:
-        print(f"\n  ❌ Cannot write to '{csv_file}' — file is locked.")
+        print(f"\n  ❌ Cannot write to '{xlsx_file}' — file is locked.")
         print("     Close it in Excel/editor if open, then try again.")
         wait()
         raise
@@ -275,13 +270,13 @@ def main():
         print("=" * 70)
         print()
         
-        csv_file = get_latest_csv()
-        if not csv_file:
-            print("  ⚠️  No CSV file found. Run Step 2 first.")
+        xlsx_file = get_latest_xlsx()
+        if not xlsx_file or not os.path.exists(xlsx_file):
+            print("  ⚠️  No data file found. Run Step 2 first.")
             wait()
             break
         
-        rows, fieldnames = read_csv_jobs(csv_file)
+        rows, fieldnames = read_xlsx_jobs(xlsx_file)
         if not rows:
             print("  ⚠️  No jobs found. Run Step 2 first.")
             wait()
@@ -292,7 +287,7 @@ def main():
         print("  Options:")
         print("  • Enter job number (1-{}) to work on it".format(len(rows)))
         print("  • 'd' + number = mark as DONE (e.g., 'd3')")
-        print("  • 'c' = clear CSV + fetch fresh data")
+        print("  • 'c' = clear data + fetch fresh jobs")
         print("  • 'r' = refresh list")
         print("  • 'q' = quit")
         print()
@@ -306,10 +301,9 @@ def main():
         elif choice == 'c':
             confirm = input("\n  ⚠️  Clear ALL jobs and fetch fresh? (y/n): ").strip().lower()
             if confirm == 'y':
-                with open(csv_file, 'w', newline='', encoding='utf-8') as f:
-                    writer = csv.DictWriter(f, fieldnames=fieldnames)
-                    writer.writeheader()
-                print("\n  ✅ CSV cleared! Now fetching fresh jobs...")
+                from linkedin_outreach import CSV_FIELDNAMES
+                clear_xlsx(xlsx_file, CSV_FIELDNAMES)
+                print("\n  ✅ Data cleared! Now fetching fresh jobs...")
                 time.sleep(1)
                 run_script("linkedin_outreach.py")
             continue
@@ -318,7 +312,7 @@ def main():
                 num = int(choice[1:])
                 if 1 <= num <= len(rows):
                     rows[num-1]['status'] = 'done'
-                    save_csv_jobs(csv_file, rows, fieldnames)
+                    save_xlsx_jobs(xlsx_file, rows, fieldnames)
                     print(f"\n  ✅ Job {num} marked as DONE!")
                     time.sleep(1)
                 else:
@@ -331,7 +325,7 @@ def main():
                 num = int(choice)
                 if 1 <= num <= len(rows):
                     job = rows[num-1]
-                    work_on_job_menu(num, job, csv_file, rows, fieldnames)
+                    work_on_job_menu(num, job, xlsx_file, rows, fieldnames)
                 else:
                     print("  Invalid job number.")
                     wait()
@@ -346,15 +340,15 @@ def main():
     print("=" * 70)
     print()
     
-    csv_file = get_latest_csv()
-    if csv_file:
-        rows, _ = read_csv_jobs(csv_file)
+    xlsx_file = get_latest_xlsx()
+    if xlsx_file and os.path.exists(xlsx_file):
+        rows, _ = read_xlsx_jobs(xlsx_file)
         done = sum(1 for r in rows if r.get('status') == 'done')
         posted = sum(1 for r in rows if r.get('status') == 'posted')
         connecting = sum(1 for r in rows if r.get('connect_status') in ['sent', 'ready_to_connect'])
         pending = sum(1 for r in rows if r.get('status') != 'done' and r.get('connect_status') not in ['sent', 'ready_to_connect'])
         
-        print(f"  📁 CSV: {csv_file}")
+        print(f"  📁 File: {xlsx_file}")
         print(f"  ✅ Completed: {done}")
         print(f"  📢 Posted (waiting on connects): {posted}")
         print(f"  🔄 Connecting/Messaging: {connecting}")
@@ -365,7 +359,7 @@ def main():
         print()
 
 
-def work_on_job_menu(num, job, csv_file, rows, fieldnames):
+def work_on_job_menu(num, job, xlsx_file, rows, fieldnames):
     """Show menu for working on one job"""
     # Auto-run steps 1, 2, 3 when entering (if not done)
     print("\n" + "=" * 70)
@@ -457,7 +451,7 @@ def work_on_job_menu(num, job, csv_file, rows, fieldnames):
             print(f"   ⚠️  Error: {e}")
     
     # Save after auto-preparation
-    save_csv_jobs(csv_file, rows, fieldnames)
+    save_csv_jobs(xlsx_file, rows, fieldnames)
     input("\nPress Enter to continue to menu...")
     
     # Now show menu
@@ -507,24 +501,24 @@ def work_on_job_menu(num, job, csv_file, rows, fieldnames):
         choice = input("Select option (1-10): ").strip()
         
         if choice == '1':
-            get_referral_link(num, job, csv_file, rows, fieldnames)
+            get_referral_link(num, job, xlsx_file, rows, fieldnames)
         elif choice == '2':
-            generate_outreach_for_job(num, job, csv_file, rows, fieldnames)
+            generate_outreach_for_job(num, job, xlsx_file, rows, fieldnames)
         elif choice == '3':
-            generate_posts_for_job(num, job, csv_file, rows, fieldnames)
+            generate_posts_for_job(num, job, xlsx_file, rows, fieldnames)
         elif choice == '4':
-            open_search(num, job, csv_file, rows, fieldnames)
+            open_search(num, job, xlsx_file, rows, fieldnames)
         elif choice == '5':
-            extract_profiles(num, job, csv_file, rows, fieldnames)
+            extract_profiles(num, job, xlsx_file, rows, fieldnames)
         elif choice == '6':
-            open_saved_profiles(num, job, csv_file, rows, fieldnames)
+            open_saved_profiles(num, job, xlsx_file, rows, fieldnames)
         elif choice == '7':
-            send_outreach(num, job, csv_file, rows, fieldnames)
+            send_outreach(num, job, xlsx_file, rows, fieldnames)
         elif choice == '8':
-            view_posts(num, job, csv_file, rows, fieldnames)
+            view_posts(num, job, xlsx_file, rows, fieldnames)
         elif choice == '9':
             job['status'] = 'done'
-            save_csv_jobs(csv_file, rows, fieldnames)
+            save_csv_jobs(xlsx_file, rows, fieldnames)
             break
         elif choice == '10':
             break
@@ -533,7 +527,7 @@ def work_on_job_menu(num, job, csv_file, rows, fieldnames):
             time.sleep(1)
 
 
-def get_referral_link(num, job, csv_file, rows, fieldnames):
+def get_referral_link(num, job, xlsx_file, rows, fieldnames):
     """Open job page, then ask user to paste referral link in terminal"""
     clear()
     print("=" * 70)
@@ -545,7 +539,7 @@ def get_referral_link(num, job, csv_file, rows, fieldnames):
     title = job.get('title', '')
     
     if not job_id:
-        print("  ⚠️  No job ID in CSV.")
+        print("  ⚠️  No job ID in file.")
         print("  Please run STEP 2 (Fetch Jobs) to get the job ID.")
         input("\nPress Enter to continue...")
         return
@@ -577,12 +571,12 @@ def get_referral_link(num, job, csv_file, rows, fieldnames):
                 r['referral_link'] = link
                 break
         
-        # Save to CSV
-        save_csv_jobs(csv_file, rows, fieldnames)
-        print(f"\n  ✅ Referral link saved to CSV!")
+        # Save to XLSX
+        save_xlsx_jobs(xlsx_file, rows, fieldnames)
+        print(f"\n  ✅ Referral link saved!")
 
 
-def generate_outreach_for_job(num, job, csv_file, rows, fieldnames):
+def generate_outreach_for_job(num, job, xlsx_file, rows, fieldnames):
     """Generate outreach message for selected job"""
     clear()
     print("=" * 70)
@@ -631,7 +625,7 @@ def generate_outreach_for_job(num, job, csv_file, rows, fieldnames):
                 r['outreach_message'] = message
                 break
         
-        save_csv_jobs(csv_file, rows, fieldnames)
+        save_csv_jobs(xlsx_file, rows, fieldnames)
         print(f"  ✅ Outreach message generated! (Style: {selected_style['name']})")
         print()
         print("  " + "-" * 60)
@@ -644,7 +638,7 @@ def generate_outreach_for_job(num, job, csv_file, rows, fieldnames):
         print(f"  ⚠️  Error: {e}")
 
 
-def generate_posts_for_job(num, job, csv_file, rows, fieldnames):
+def generate_posts_for_job(num, job, xlsx_file, rows, fieldnames):
     """Generate social posts for selected job"""
     clear()
     print("=" * 70)
@@ -694,7 +688,7 @@ def generate_posts_for_job(num, job, csv_file, rows, fieldnames):
                 r['facebook_comment'] = facebook_comment
                 break
         
-        save_csv_jobs(csv_file, rows, fieldnames)
+        save_csv_jobs(xlsx_file, rows, fieldnames)
         print(f"  ✅ Social posts generated! (Style: {selected_style['name']})")
         print(f"    📱 LinkedIn post: {len(linkedin_post)} chars")
         print(f"    🐦 X/Twitter post: {len(x_post)} chars")
@@ -703,7 +697,7 @@ def generate_posts_for_job(num, job, csv_file, rows, fieldnames):
         print(f"  ⚠️  Error: {e}")
 
 
-def open_search(num, job, csv_file, rows, fieldnames):
+def open_search(num, job, xlsx_file, rows, fieldnames):
     """Open Boolean search in Chrome"""
     clear()
     print("=" * 70)
@@ -722,7 +716,7 @@ def open_search(num, job, csv_file, rows, fieldnames):
     print()
     
     job['connect_status'] = 'searching'
-    save_csv_jobs(csv_file, rows, fieldnames)
+    save_csv_jobs(xlsx_file, rows, fieldnames)
     
     google_url = f"https://www.google.com/search?q={urllib.parse.quote(query)}"
     open_url_in_tab(google_url)
@@ -732,7 +726,7 @@ def open_search(num, job, csv_file, rows, fieldnames):
     input("\nPress Enter to continue...")
 
 
-def extract_profiles(num, job, csv_file, rows, fieldnames):
+def extract_profiles(num, job, xlsx_file, rows, fieldnames):
     """Extract LinkedIn profiles from search"""
     clear()
     print("=" * 70)
@@ -749,12 +743,10 @@ def extract_profiles(num, job, csv_file, rows, fieldnames):
         # Pass job title as argument so it saves to correct job
         run_script("open_profiles.py", [job_title])
         
-        # Reload CSV to get profiles
-        csv_file = get_latest_csv()
-        if csv_file and os.path.exists(csv_file):
-            with open(csv_file, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                all_rows = list(reader)
+        # Reload XLSX to get profiles
+        xlsx_file = get_latest_xlsx()
+        if xlsx_file and os.path.exists(xlsx_file):
+            all_rows, _ = read_xlsx(xlsx_file)
             for r in all_rows:
                 if r.get('title', '').strip().lower() == job['title'].strip().lower():
                     profiles = r.get('linkedin_profiles', '')
@@ -763,11 +755,11 @@ def extract_profiles(num, job, csv_file, rows, fieldnames):
                     break
         
         job['connect_status'] = 'ready_to_connect'
-        save_csv_jobs(csv_file, rows, fieldnames)
+        save_xlsx_jobs(xlsx_file, rows, fieldnames)
         print("  ✅ Profiles extracted!")
 
 
-def open_saved_profiles(num, job, csv_file, rows, fieldnames):
+def open_saved_profiles(num, job, xlsx_file, rows, fieldnames):
     """Open all saved LinkedIn profiles in Chrome tabs"""
     clear()
     print("=" * 70)
@@ -812,7 +804,7 @@ def open_saved_profiles(num, job, csv_file, rows, fieldnames):
     input("\nPress Enter to continue...")
 
 
-def send_outreach(num, job, csv_file, rows, fieldnames):
+def send_outreach(num, job, xlsx_file, rows, fieldnames):
     """Send connection requests"""
     clear()
     print("=" * 70)
@@ -849,11 +841,11 @@ def send_outreach(num, job, csv_file, rows, fieldnames):
     confirm = input("  Mark as sent? (y/n): ").strip().lower()
     if confirm == 'y':
         job['connect_status'] = 'sent'
-        save_csv_jobs(csv_file, rows, fieldnames)
+        save_csv_jobs(xlsx_file, rows, fieldnames)
         print("  ✅ Marked as sent!")
 
 
-def view_posts(num, job, csv_file, rows, fieldnames):
+def view_posts(num, job, xlsx_file, rows, fieldnames):
     """View generated posts and open draft tabs"""
     clear()
     print("=" * 70)

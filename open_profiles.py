@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Extract LinkedIn Profiles from Google Search Results
-Saves URLs to CSV for later outreach.
+Saves URLs to XLSX for later outreach.
 Usage: python open_profiles.py [job_title_partial]
 """
 
@@ -9,11 +9,13 @@ import subprocess
 import time
 import json
 import random
-import csv
 import os
 import sys
 import io
 import re
+
+# XLSX storage (replaces CSV)
+from xlsx_utils import read_xlsx, write_xlsx, get_xlsx_path
 
 # Windows compatibility: Chrome automation via CDP
 from chrome_utils import (
@@ -96,20 +98,18 @@ def open_urls_in_tabs(urls):
         time.sleep(random.uniform(2, 5))
 
 
-def save_profiles_to_csv(job_title, urls):
-    """Save extracted URLs to the linkedin_profiles column in CSV"""
+def save_profiles_to_xlsx(job_title, urls):
+    """Save extracted URLs to the linkedin_profiles column in XLSX"""
     # Normalize URLs to remove country subdomains
     urls = normalize_urls(urls)
     
-    csv_file = 'uctalent_jobs.csv'
-    if not os.path.exists(csv_file):
-        print(f"\n  ⚠️  No CSV file found at {csv_file}")
+    xlsx_file = get_xlsx_path()
+    if not os.path.exists(xlsx_file):
+        print(f"\n  ⚠️  No data file found at {xlsx_file}")
         return False
     
-    with open(csv_file, 'r', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-        fieldnames = reader.fieldnames
+    rows, fieldnames = read_xlsx(xlsx_file)
+    fieldnames = list(fieldnames)
     
     # Add linkedin_profiles column if missing
     if 'linkedin_profiles' not in fieldnames:
@@ -138,13 +138,10 @@ def save_profiles_to_csv(job_title, urls):
             break
     
     if saved:
-        with open(csv_file, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(rows)
+        write_xlsx(xlsx_file, rows, fieldnames)
         return True
     else:
-        print(f"\n  ⚠️  No matching job found in CSV for: {job_title}")
+        print(f"\n  ⚠️  No matching job found in file for: {job_title}")
         print("  Profiles saved to console output only.")
         return False
 
@@ -206,11 +203,11 @@ def main():
         for i, url in enumerate(all_urls, 1):
             print(f"  {i}. {url}")
         
-        # Save to CSV
+        # Save to XLSX
         if job_title:
-            save_profiles_to_csv(job_title, all_urls)
+            save_profiles_to_xlsx(job_title, all_urls)
         else:
-            print("\n💡 Tip: Run again with job title to auto-save to CSV:")
+            print("\n💡 Tip: Run again with job title to auto-save to file:")
             print("   python open_profiles.py \"Job Title Here\"")
         
         # Open tabs for manual review

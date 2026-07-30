@@ -9,7 +9,6 @@ RUN 2: Reads CSV, generates social media posts with referral links,
 
 import requests
 import json
-import csv
 import re
 import glob
 import os
@@ -25,6 +24,9 @@ from bs4 import BeautifulSoup
 # Content style system (voice, tone, format presets)
 from content_styles import get_style, list_styles, STYLES, DEFAULT_STYLE
 
+# XLSX storage (replaces CSV)
+from xlsx_utils import read_xlsx, write_xlsx, clear_xlsx, get_xlsx_path
+
 # Windows compatibility: Chrome automation via CDP instead of AppleScript
 from chrome_utils import (
     execute_js, switch_to_last_tab, navigate_to_url, open_url_in_tab,
@@ -33,7 +35,7 @@ from chrome_utils import (
 )
 
 
-# ─── CSV Field Definitions ───────────────────────────────────────────────────
+# ─── Field Definitions ────────────────────────────────────────────────────────
 
 CSV_FIELDNAMES = [
     'id', 'title', 'referral_link', 'bounty', 'bounty_display', 'bounty_currency',
@@ -726,18 +728,18 @@ def sort_jobs_by_date(rows):
 # ─── Job Fetching ───────────────────────────────────────────────────────────
 
 def get_previous_job_ids():
-    """Read from single persistent CSV and collect job titles to skip"""
+    """Read from persistent XLSX and collect job titles to skip"""
     seen_titles = set()
-    csv_file = 'uctalent_jobs.csv'
+    xlsx_file = get_xlsx_path()
     
-    if os.path.exists(csv_file):
-        try:
-            with open(csv_file, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    seen_titles.add(row['title'].strip().lower())
-        except Exception:
-            pass
+    try:
+        rows, _ = read_xlsx(xlsx_file)
+        for row in rows:
+            title = row.get('title', '').strip().lower()
+            if title:
+                seen_titles.add(title)
+    except Exception:
+        pass
     
     return seen_titles
 
@@ -2197,8 +2199,8 @@ def main():
     print("UCTalent Bounty Jobs - Workflow Automation")
     print("=" * 70)
     
-    # CSV file for persistent storage
-    csv_filename = 'uctalent_jobs.csv'
+    # XLSX file for persistent storage
+    xlsx_filename = get_xlsx_path()
     
     # Load personal config
     print("\n📋 Loading personal context...")
@@ -2213,16 +2215,14 @@ def main():
     if previous_titles:
         print(f"\nFound {len(previous_titles)} jobs in previous list (will skip duplicates)")
     
-    # Read existing CSV to find jobs needing processing
+    # Read existing XLSX to find jobs needing processing
     existing_rows = []
-    if os.path.exists(csv_filename):
-        with open(csv_filename, 'r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            existing_rows = list(reader)
+    if os.path.exists(xlsx_filename):
+        existing_rows, _ = read_xlsx(xlsx_filename)
     
     existing_titles = {row['title'].strip().lower(): row for row in existing_rows}
     if existing_titles:
-        print(f"Found {len(existing_titles)} existing job(s) in CSV (will skip duplicates)\n")
+        print(f"Found {len(existing_titles)} existing job(s) in file (will skip duplicates)\n")
     
     # Fetch bounty jobs from API
     print("\n📊 Fetching bounty jobs from UCTalent...")
@@ -2263,16 +2263,13 @@ def main():
                     updated_count += 1
         
         if updated_count:
-            # Re-save CSV with updated bounty info
+            # Re-save XLSX with updated bounty info
             now_str = datetime.now().strftime('%Y-%m-%d %H:%M')
             for row in existing_rows:
                 row['last_updated'] = now_str
             
             existing_rows = sort_jobs_by_date(existing_rows)
-            with open(csv_filename, 'w', newline='', encoding='utf-8') as f:
-                writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
-                writer.writeheader()
-                writer.writerows(existing_rows)
+            write_xlsx(xlsx_filename, existing_rows, CSV_FIELDNAMES)
             print(f"✅ Updated bounty info for {updated_count} existing job(s)")
         else:
             print("   All existing jobs already have bounty info.")
@@ -2296,7 +2293,7 @@ def main():
         desc = fetch_job_description(job['id'], job['title'])
         query = generate_boolean_query(job['title'], desc, job['tags'], job['location'])
         
-        # Check if this job exists in CSV with a referral link
+        # Check if this job exists in XLSX with a referral link
         title_lower = job['title'].strip().lower()
         existing_row = existing_titles.get(title_lower, {})
         existing_link = existing_row.get('referral_link', '')
@@ -2354,17 +2351,15 @@ def main():
     results = processed_jobs
     
     print("\n" + "=" * 70)
-    print("SAVING JOBS TO CSV")
+    print("SAVING JOBS TO XLSX")
     print("=" * 70)
     
-    csv_filename = 'uctalent_jobs.csv'
+    xlsx_filename = get_xlsx_path()
     
-    # Read existing CSV if exists
+    # Read existing XLSX if exists
     existing_rows = []
-    if os.path.exists(csv_filename):
-        with open(csv_filename, 'r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            existing_rows = list(reader)
+    if os.path.exists(xlsx_filename):
+        existing_rows, _ = read_xlsx(xlsx_filename)
     
     # Merge: update existing or add new
     merged = []
@@ -2416,20 +2411,17 @@ def main():
         row['last_updated'] = now_str
     
     merged = sort_jobs_by_date(merged)
-    with open(csv_filename, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
-        writer.writeheader()
-        writer.writerows(merged)
+    write_xlsx(xlsx_filename, merged, CSV_FIELDNAMES)
     
     print("\n" + "=" * 70)
     total_in_file = len(merged)
     new_count = sum(1 for r in results if r['title'].strip().lower() not in {r2['title'].strip().lower() for r2 in existing_rows})
     existing_count = total_in_file - new_count
-    if not os.path.exists(csv_filename):
+    if not os.path.exists(xlsx_filename):
         print("STEP 1 OF 2 COMPLETE!")
     else:
         print("STEP 2 OF 2 IN PROGRESS...")
-    print(f"✅ Saved to: {csv_filename}")
+    print(f"✅ Saved to: {xlsx_filename}")
     print(f"✅ Total jobs in file: {total_in_file} ({new_count} new, {existing_count} existing)")
     print("=" * 70)
     
@@ -2441,13 +2433,13 @@ def main():
     if jobs_with_links == 0:
         print("\n⚠️  No jobs have referral links yet.")
         print("\n📋 You're on RUN 2 but no links found.")
-        print("   Add referral links to CSV and run again.\n")
+        print("   Add referral links to file and run again.\n")
         return
     
     # Generate posts for jobs with links (RUN 2)
     results = generate_all_posts(results, config)
     
-    # Merge updated results back into CSV
+    # Merge updated results back into XLSX
     results_titles = {r['title'].strip().lower(): r for r in results}
     for row in merged:
         title_lower = row['title'].strip().lower()
@@ -2473,20 +2465,17 @@ def main():
             row.update(updated)
             row.update(preserved)
     
-    # Save updated CSV with posts (RUN 2)
+    # Save updated XLSX with posts (RUN 2)
     merged = sort_jobs_by_date(merged)
-    with open(csv_filename, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
-        writer.writeheader()
-        writer.writerows(merged)
+    write_xlsx(xlsx_filename, merged, CSV_FIELDNAMES)
     
     print("\n" + "=" * 70)
     print("STEP 2 OF 2: COMPLETE!")
     print("=" * 70)
-    print(f"\n✅ All done! Check {csv_filename} for complete data.")
+    print(f"\n✅ All done! Check {xlsx_filename} for complete data.")
     print("=" * 70)
     
-    if results and os.path.exists(csv_filename):
+    if results and os.path.exists(xlsx_filename):
         print("\n📋 Next steps:")
         print("   • Work on individual jobs using guide.py")
         print("   • Send connection requests (manual, 20-25/day max)")

@@ -91,7 +91,7 @@ The guide walks you through each job:
 
 ### Refresh jobs
 
-In the job list menu, press `c` to clear the CSV and fetch fresh jobs from UCTalent.
+In the job list menu, press `c` to clear the data and fetch fresh jobs from UCTalent.
 
 ## Project Structure
 
@@ -105,7 +105,7 @@ In the job list menu, press `c` to clear the CSV and fetch fresh jobs from UCTal
 ├── collect_founder_logs.py  # Collect personal stories for content
 ├── config.json              # Your personal config (gitignored)
 ├── config.example.json      # Template for config.json
-├── uctalent_jobs.csv        # Job database (auto-managed)
+├── uctalent_jobs.xlsx       # Job database (auto-managed, Excel format)
 └── requirements.txt         # Python dependencies
 ```
 

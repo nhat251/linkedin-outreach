@@ -15,19 +15,19 @@ Semi-automated LinkedIn outreach system for UCTalent bounty jobs. Fetches job li
 | `open_profiles.py` | Extracts LinkedIn profile URLs from Google search results |
 | `collect_founder_logs.py` | Collect your authentic stories/opinions for content |
 | `config.json` | Personal context & brand voice configuration |
-| `uctalent_jobs.csv` | **Single persistent file** — auto-created, tracks all jobs |
+| `uctalent_jobs.xlsx` | **Single persistent file** — auto-created, tracks all jobs |
 
 ---
 
 ## Data Management
 
-All job data is stored in a **single persistent file**: `uctalent_jobs.csv`
+All job data is stored in a **single persistent file**: `uctalent_jobs.xlsx` (Excel format with formatted headers, auto-width columns, and priority-based row coloring)
 
 - New jobs are **appended** (not overwritten)
 - Existing jobs are **updated** with new data
 - Timestamps track when jobs were created and last updated
 
-### CSV Columns
+### XLSX Columns
 
 | Column | Description |
 |--------|-------------|
