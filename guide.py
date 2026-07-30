@@ -451,7 +451,7 @@ def work_on_job_menu(num, job, xlsx_file, rows, fieldnames):
             print(f"   ⚠️  Error: {e}")
     
     # Save after auto-preparation
-    save_csv_jobs(xlsx_file, rows, fieldnames)
+    save_xlsx_jobs(xlsx_file, rows, fieldnames)
     input("\nPress Enter to continue to menu...")
     
     # Now show menu
@@ -518,7 +518,7 @@ def work_on_job_menu(num, job, xlsx_file, rows, fieldnames):
             view_posts(num, job, xlsx_file, rows, fieldnames)
         elif choice == '9':
             job['status'] = 'done'
-            save_csv_jobs(xlsx_file, rows, fieldnames)
+            save_xlsx_jobs(xlsx_file, rows, fieldnames)
             break
         elif choice == '10':
             break
@@ -625,7 +625,7 @@ def generate_outreach_for_job(num, job, xlsx_file, rows, fieldnames):
                 r['outreach_message'] = message
                 break
         
-        save_csv_jobs(xlsx_file, rows, fieldnames)
+        save_xlsx_jobs(xlsx_file, rows, fieldnames)
         print(f"  ✅ Outreach message generated! (Style: {selected_style['name']})")
         print()
         print("  " + "-" * 60)
@@ -688,7 +688,7 @@ def generate_posts_for_job(num, job, xlsx_file, rows, fieldnames):
                 r['facebook_comment'] = facebook_comment
                 break
         
-        save_csv_jobs(xlsx_file, rows, fieldnames)
+        save_xlsx_jobs(xlsx_file, rows, fieldnames)
         print(f"  ✅ Social posts generated! (Style: {selected_style['name']})")
         print(f"    📱 LinkedIn post: {len(linkedin_post)} chars")
         print(f"    🐦 X/Twitter post: {len(x_post)} chars")
@@ -716,7 +716,7 @@ def open_search(num, job, xlsx_file, rows, fieldnames):
     print()
     
     job['connect_status'] = 'searching'
-    save_csv_jobs(xlsx_file, rows, fieldnames)
+    save_xlsx_jobs(xlsx_file, rows, fieldnames)
     
     google_url = f"https://www.google.com/search?q={urllib.parse.quote(query)}"
     open_url_in_tab(google_url)
@@ -841,7 +841,7 @@ def send_outreach(num, job, xlsx_file, rows, fieldnames):
     confirm = input("  Mark as sent? (y/n): ").strip().lower()
     if confirm == 'y':
         job['connect_status'] = 'sent'
-        save_csv_jobs(xlsx_file, rows, fieldnames)
+        save_xlsx_jobs(xlsx_file, rows, fieldnames)
         print("  ✅ Marked as sent!")
 
 
