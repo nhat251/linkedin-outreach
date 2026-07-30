@@ -16,6 +16,9 @@ import urllib.parse
 import subprocess
 import re
 
+# Content style system
+from content_styles import get_style, list_styles, STYLES, DEFAULT_STYLE, choose_style_interactive
+
 # Windows compatibility: Chrome automation via CDP
 from chrome_utils import (
     ensure_chrome_debugging, is_chrome_running,
@@ -403,6 +406,8 @@ def work_on_job_menu(num, job, csv_file, rows, fieldnames):
     # Step 2: Generate outreach message (always, if not exists)
     if not job.get('outreach_message'):
         print("\n2️⃣  Generating outreach message...")
+        # Let user pick style for the message
+        outreach_style = choose_style_interactive("outreach message style")
         sys.path.insert(0, '.')
         try:
             from linkedin_outreach import generate_outreach_message, fetch_job_description, load_config
@@ -414,9 +419,9 @@ def work_on_job_menu(num, job, csv_file, rows, fieldnames):
             else:
                 desc = job.get('description', 'Description not available')
             tags = job.get('tags', '').split(',') if job.get('tags') else []
-            message = generate_outreach_message(job_title, desc, job.get('location', ''), job.get('salary', ''), tags, clean_link, config.get('name'))
+            message = generate_outreach_message(job_title, desc, job.get('location', ''), job.get('salary', ''), tags, clean_link, config.get('name'), outreach_style)
             job['outreach_message'] = message
-            print("   ✅ Generated!")
+            print(f"   ✅ Generated! (Style: {get_style(outreach_style)['name']})")
         except Exception as e:
             print(f"   ⚠️  Error: {e}")
     
@@ -424,6 +429,7 @@ def work_on_job_menu(num, job, csv_file, rows, fieldnames):
     has_posts = job.get('linkedin_post') and job.get('linkedin_post') not in ['', 'Not generated']
     if has_link and not has_posts:
         print("\n3️⃣  Generating social posts...")
+        post_style = choose_style_interactive("social post style")
         sys.path.insert(0, '.')
         try:
             from linkedin_outreach import (
@@ -432,9 +438,9 @@ def work_on_job_menu(num, job, csv_file, rows, fieldnames):
                 generate_facebook_comment, load_config
             )
             config = load_config()
-            linkedin_post = generate_linkedin_post(job, clean_link, config)
-            x_post = generate_x_post(job, clean_link, config)
-            facebook_post = generate_facebook_post(job, clean_link, config)
+            linkedin_post = generate_linkedin_post(job, clean_link, config, post_style)
+            x_post = generate_x_post(job, clean_link, config, post_style)
+            facebook_post = generate_facebook_post(job, clean_link, config, post_style)
             image_text = generate_image_text(job, config)
             linkedin_comment = generate_linkedin_comment(job, clean_link, config)
             x_comment = generate_x_comment(job, clean_link, config)
@@ -446,7 +452,7 @@ def work_on_job_menu(num, job, csv_file, rows, fieldnames):
             job['linkedin_comment'] = linkedin_comment
             job['x_comment'] = x_comment
             job['facebook_comment'] = facebook_comment
-            print("   ✅ Generated!")
+            print(f"   ✅ Generated! (Style: {get_style(post_style)['name']})")
         except Exception as e:
             print(f"   ⚠️  Error: {e}")
     
@@ -584,6 +590,12 @@ def generate_outreach_for_job(num, job, csv_file, rows, fieldnames):
     print("=" * 70)
     print()
     
+    # Let user pick style
+    style_name = choose_style_interactive("outreach message style")
+    selected_style = get_style(style_name)
+    print(f"\n  🎨 Using style: {selected_style['name']} — {selected_style['description']}")
+    print()
+    
     sys.path.insert(0, '.')
     try:
         from linkedin_outreach import (
@@ -597,11 +609,11 @@ def generate_outreach_for_job(num, job, csv_file, rows, fieldnames):
         
         # Try AI first (NVIDIA → Qwen → Gemini)
         if config.get('use_nvidia', False):
-            message = generate_with_nvidia(job, job.get('referral_link', ''), config, 'outreach_message')
+            message = generate_with_nvidia(job, job.get('referral_link', ''), config, 'outreach_message', style_name)
         if not message and config.get('use_qwen', False):
-            message = generate_with_qwen(job, job.get('referral_link', ''), config, 'outreach_message')
+            message = generate_with_qwen(job, job.get('referral_link', ''), config, 'outreach_message', style_name)
         if not message and config.get('use_gemini', False):
-            message = generate_with_gemini(job, job.get('referral_link', ''), config, 'outreach_message')
+            message = generate_with_gemini(job, job.get('referral_link', ''), config, 'outreach_message', style_name)
         
         # Fallback to template if AI not available
         if not message:
@@ -609,7 +621,7 @@ def generate_outreach_for_job(num, job, csv_file, rows, fieldnames):
             tags = job.get('tags', '').split(',') if job.get('tags') else []
             referral_link = job.get('referral_link', '')
             clean_link = referral_link if referral_link and referral_link not in ['', '[MANUAL_PASTE]', '[REFERRAL_LINK]', '[NO_LINK]'] else ''
-            message = generate_outreach_message(job['title'], desc, job.get('location', ''), job.get('salary', ''), tags, clean_link, config.get('name'))
+            message = generate_outreach_message(job['title'], desc, job.get('location', ''), job.get('salary', ''), tags, clean_link, config.get('name'), style_name)
         else:
             message = clean_content(message.strip())
         
@@ -620,14 +632,14 @@ def generate_outreach_for_job(num, job, csv_file, rows, fieldnames):
                 break
         
         save_csv_jobs(csv_file, rows, fieldnames)
-        print("  ✅ Outreach message generated!")
+        print(f"  ✅ Outreach message generated! (Style: {selected_style['name']})")
         print()
         print("  " + "-" * 60)
         for line in message.split('\n'):
             print(f"  {line}")
         print("  " + "-" * 60)
         print()
-        print("  💡 Not happy? Run option 2 again to regenerate with AI.")
+        print("  💡 Not happy? Run option 2 again to regenerate with a different style.")
     except Exception as e:
         print(f"  ⚠️  Error: {e}")
 
@@ -646,6 +658,12 @@ def generate_posts_for_job(num, job, csv_file, rows, fieldnames):
         input("\nPress Enter to continue...")
         return
     
+    # Let user pick style
+    style_name = choose_style_interactive("social post style")
+    selected_style = get_style(style_name)
+    print(f"\n  🎨 Using style: {selected_style['name']} — {selected_style['description']}")
+    print()
+    
     sys.path.insert(0, '.')
     try:
         from linkedin_outreach import (
@@ -656,9 +674,9 @@ def generate_posts_for_job(num, job, csv_file, rows, fieldnames):
         
         config = load_config()
         
-        linkedin_post = generate_linkedin_post(job, referral_link, config)
-        x_post = generate_x_post(job, referral_link, config)
-        facebook_post = generate_facebook_post(job, referral_link, config)
+        linkedin_post = generate_linkedin_post(job, referral_link, config, style_name)
+        x_post = generate_x_post(job, referral_link, config, style_name)
+        facebook_post = generate_facebook_post(job, referral_link, config, style_name)
         image_text = generate_image_text(job, config)
         linkedin_comment = generate_linkedin_comment(job, referral_link, config)
         x_comment = generate_x_comment(job, referral_link, config)
@@ -677,7 +695,7 @@ def generate_posts_for_job(num, job, csv_file, rows, fieldnames):
                 break
         
         save_csv_jobs(csv_file, rows, fieldnames)
-        print("  ✅ Social posts generated!")
+        print(f"  ✅ Social posts generated! (Style: {selected_style['name']})")
         print(f"    📱 LinkedIn post: {len(linkedin_post)} chars")
         print(f"    🐦 X/Twitter post: {len(x_post)} chars")
         print(f"    📘 Facebook post: {len(facebook_post)} chars")

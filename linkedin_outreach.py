@@ -22,6 +22,9 @@ import subprocess
 from datetime import datetime
 from bs4 import BeautifulSoup
 
+# Content style system (voice, tone, format presets)
+from content_styles import get_style, list_styles, STYLES, DEFAULT_STYLE
+
 # Windows compatibility: Chrome automation via CDP instead of AppleScript
 from chrome_utils import (
     execute_js, switch_to_last_tab, navigate_to_url, open_url_in_tab,
@@ -122,26 +125,27 @@ You target TALENT (job seekers):
 HASHTAGS: {hashtags}
 
 RULES:
-- Write professionally — no slang, no casual greetings like "Hey"
 - No corporate buzzwords or AI-sounding language
 - Keep posts under platform limits (LinkedIn: ~3000 chars, X: 280 chars)
 - Include relevant emojis naturally
 - Never sound desperate or salesy
-- Sound like a professional recruiter, not a founder
-
-TONE: Professional, polished, approachable."""
+- Follow the STYLE voice defined above consistently"""
 
 
-def build_system_prompt(config):
-    """Build the system prompt from config"""
+def build_system_prompt(config, style_name=None):
+    """Build the system prompt from config, with optional style override"""
+    style = get_style(style_name)
     targets = config.get('targets', {})
     talent = targets.get('talent', {})
     referrer = targets.get('referrer', {})
     
+    # Override brand_voice in the template with the style's system_voice
+    brand_voice_override = f"STYLE: {style['system_voice']}\n\nBRAND VOICE: {config.get('brand_voice', 'Bold, authentic, founder-to-founder')}"
+    
     return GEMINI_SYSTEM_PROMPT.format(
         name=config.get('name', 'Your Name'),
         role=config.get('role', 'Your Role'),
-        brand_voice=config.get('brand_voice', 'Bold, authentic, founder-to-founder'),
+        brand_voice=brand_voice_override,
         personal_story=config.get('personal_story', ''),
         mission_statement=config.get('mission_statement', ''),
         founder_logs=config.get('founder_logs', ''),
@@ -233,17 +237,19 @@ def call_nvidia(system_prompt, user_prompt, api_key):
         return None
 
 
-def build_qwen_system_prompt(config):
-    """Build system prompt for Qwen from config"""
+def build_qwen_system_prompt(config, style_name=None):
+    """Build system prompt for Qwen from config, with optional style override"""
+    style = get_style(style_name)
     targets = config.get('targets', {})
     talent = targets.get('talent', {})
-    referrer = targets.get('referrer', {})
     
     return f"""You are {config.get('name', 'Your Name')}, {config.get('role', 'Your Role')}.
 
-BRAND VOICE: {config.get('brand_voice', 'Bold, authentic, founder-to-founder')}
+STYLE VOICE: {style['system_voice']}
 
-PERSONAL STORY: {config.get('personal_story', '')}
+BRAND VOICE: {config.get('brand_voice', 'Professional, polished, approachable')}
+
+YOUR STORY: {config.get('personal_story', '')}
 
 MISSION: {config.get('mission_statement', '')}
 
@@ -260,26 +266,28 @@ You target TALENT (job seekers):
 
 HASHTAGS: {config.get('common_hashtags', '#Web3Jobs #DecentralizedHiring #UCTalent')}
 
+OUTREACH VOICE: {style['outreach']['voice']}
+
+POST VOICE: {style['post']['voice']}
+
 RULES:
-- Write professionally — no slang, no casual greetings like "Hey"
 - No corporate buzzwords or AI-sounding language
-- Keep posts under platform limits (LinkedIn: ~3000 chars, X: 280 chars)
 - Include relevant emojis naturally
 - Never sound desperate or salesy
-- Sound like a professional recruiter, not a founder
-
-TONE: Professional, polished, approachable."""
+- Follow the style voice above consistently"""
 
 
-def linkedin_post_prompt(job, referral_link, config):
+def linkedin_post_prompt(job, referral_link, config, style_name=None):
     """Build prompt for LinkedIn post"""
+    style = get_style(style_name)
     title = job.get('title', '')
     location = job.get('location', '')
     salary = job.get('salary', '')
     tags = job.get('tags', '')
     
-    system_prompt = build_qwen_system_prompt(config)
+    system_prompt = build_qwen_system_prompt(config, style_name)
     
+    post = style['post']
     user_prompt = f"""Write a LinkedIn post about a job opening (this is for a CLIENT, not your own company):
 
 Job: {title}
@@ -287,58 +295,76 @@ Location: {location}
 Salary: {salary}
 Skills: {tags}
 
+STYLE: {style['name']}
+
+Voice: {post['voice']}
+Hook style: {post['hook_style']}
+Body style: {post['body_style']}
+Emoji usage: {post['emoji_usage']}
+
 Requirements:
 - Write in English
-- Hook: Short, attention-grabbing
-- Body: Brief but compelling, describe the opportunity
-- CTA: Say "Link in comments" — do NOT include any URL in the post body
-- Include 1-3 relevant hashtags
-- Keep under 2000 characters
-- Professional tone, write naturally
+- Hook: {post['hook_style']}
+- Body: {post['body_style']}
+- CTA: {post['cta']}
+- Include {post['hashtag_count']} relevant hashtags
+- Keep under {post['linkedin_max']} characters
+- {post['emoji_usage']}
+- Write naturally, don't sound like AI
 
 Write ONE post only. No explanations."""
     
     return system_prompt, user_prompt
 
 
-def x_post_prompt(job, referral_link, config):
+def x_post_prompt(job, referral_link, config, style_name=None):
     """Build prompt for X/Twitter post"""
+    style = get_style(style_name)
     title = job.get('title', '')
     location = job.get('location', '')
     salary = job.get('salary', '')
     tags = job.get('tags', '')
     
-    system_prompt = build_qwen_system_prompt(config)
+    system_prompt = build_qwen_system_prompt(config, style_name)
     
+    post = style['post']
     user_prompt = f"""Write a short X/Twitter post about a job opening (this is for a CLIENT, not your own company):
 
 Job: {title}
 Location: {location}
 Skills: {tags}
 
+STYLE: {style['name']}
+
+Voice: {post['voice']}
+Hook style: {post['hook_style']}
+
 Requirements:
 - Write in English
-- Hook: Attention-grabbing
-- Body: Brief, punchy, max 200 characters
-- CTA: Say "Link in comments" or "Link below 👇" — do NOT include any URL in the post body
-- Include relevant hashtags (1-2 max)
-- Keep under 280 characters total
-- Professional tone
+- Hook: {post['hook_style']} (very short, max 80 chars)
+- Body: Short and punchy
+- CTA: {post['cta']}
+- Include {post['hashtag_count']} relevant hashtags max
+- Keep under {post['x_max']} characters total
+- {post['emoji_usage']}
+- Write naturally, don't sound like AI
 
 Write ONE tweet only. No explanations."""
     
     return system_prompt, user_prompt
 
 
-def facebook_post_prompt(job, referral_link, config):
+def facebook_post_prompt(job, referral_link, config, style_name=None):
     """Build prompt for Facebook post"""
+    style = get_style(style_name)
     title = job.get('title', '')
     location = job.get('location', '')
     salary = job.get('salary', '')
     tags = job.get('tags', '')
     
-    system_prompt = build_qwen_system_prompt(config)
+    system_prompt = build_qwen_system_prompt(config, style_name)
     
+    post = style['post']
     user_prompt = f"""Write a Facebook post about a job opening (this is for a CLIENT, not your own company):
 
 Job: {title}
@@ -346,73 +372,95 @@ Location: {location}
 Salary: {salary}
 Skills: {tags}
 
+STYLE: {style['name']}
+
+Voice: {post['voice']}
+Hook style: {post['hook_style']}
+
 Requirements:
 - Write in English
-- Hook: Short, attention-grabbing
-- Body: Brief but compelling
-- CTA: Say "Link in comments" — do NOT include any URL in the post body
-- Include relevant hashtags
-- Keep under 500 characters
-- Professional tone
+- Hook: {post['hook_style']}
+- Body: {post['body_style']}
+- CTA: {post['cta']}
+- Include {post['hashtag_count']} relevant hashtags
+- Keep under {post['facebook_max']} characters
+- {post['emoji_usage']}
+- Write naturally, don't sound like AI
 
 Write ONE post only. No explanations."""
     
     return system_prompt, user_prompt
 
 
-def linkedin_message_prompt(job, referral_link, config):
+def linkedin_message_prompt(job, referral_link, config, style_name=None):
     """Build prompt for LinkedIn outreach message"""
+    style = get_style(style_name)
     title = job.get('title', '')
     location = job.get('location', '')
     salary = job.get('salary', '')
     tags = job.get('tags', '')
     
-    system_prompt = build_qwen_system_prompt(config)
+    system_prompt = build_qwen_system_prompt(config, style_name)
     
-    user_prompt = f"""Write a professional LinkedIn connection request message for this job opening:
+    out = style['outreach']
+    user_prompt = f"""Write a LinkedIn connection request message for this job opening:
 
 Job: {title}
 Location: {location}
 Salary: {salary}
 Skills: {tags}
 
+STYLE: {style['name']}
+
+Voice: {out['voice']}
+Format: {out['format_notes']}
+
 Requirements:
 - This is a job opening from a CLIENT (not your own company)
-- Short (under 300 characters)
-- Professional tone — use "Hi" not "Hey"
-- Focus on the job opportunity
-- Include a subtle call to action
+- Short (under {out['max_chars']} characters)
+- Greeting: Use "{out['greeting']}"
+- Sign-off: Use "{out['signoff']}" (omit if blank)
+- {out['format_notes']}
+- {out['voice']}
+- Write naturally, don't sound like AI
 
 Write ONE message only. No explanations."""
     
     return system_prompt, user_prompt
 
 
-def x_message_prompt(job, referral_link, config):
+def x_message_prompt(job, referral_link, config, style_name=None):
     """Build prompt for X/Twitter DM outreach message"""
+    style = get_style(style_name)
     title = job.get('title', '')
     location = job.get('location', '')
     
-    system_prompt = build_qwen_system_prompt(config)
+    system_prompt = build_qwen_system_prompt(config, style_name)
     
-    user_prompt = f"""Write a short professional X/Twitter DM for this job opening:
+    out = style['outreach']
+    user_prompt = f"""Write a short X/Twitter DM for this job opening:
 
 Job: {title}
 Location: {location}
 
+STYLE: {style['name']}
+
+Voice: {out['voice']}
+
 Requirements:
 - This is a job opening from a CLIENT (not your own company)
-- Very short (under 200 characters)
-- Professional tone
+- Very short (under {min(out['max_chars'], 200)} characters)
+- {out['voice']}
 - Include a subtle call to action
+- Write naturally, don't sound like AI
 
 Write ONE message only. No explanations."""
     
     return system_prompt, user_prompt
 
 
-def generate_with_qwen(job, referral_link, config, content_type):
-    """Generate content using Qwen"""
+def generate_with_qwen(job, referral_link, config, content_type, style_name=None):
+    """Generate content using Qwen with optional style"""
     api_key = config.get('qwen_api_key', '')
     
     if not api_key:
@@ -431,13 +479,13 @@ def generate_with_qwen(job, referral_link, config, content_type):
     if not prompt_func:
         return None
     
-    system_prompt, user_prompt = prompt_func(job, referral_link, config)
+    system_prompt, user_prompt = prompt_func(job, referral_link, config, style_name)
     
     return call_qwen(system_prompt, user_prompt, api_key)
 
 
-def generate_with_nvidia(job, referral_link, config, content_type):
-    """Generate content using NVIDIA Nemotron"""
+def generate_with_nvidia(job, referral_link, config, content_type, style_name=None):
+    """Generate content using NVIDIA Nemotron with optional style"""
     api_key = config.get('nvidia_api_key', '')
     
     if not api_key:
@@ -456,7 +504,7 @@ def generate_with_nvidia(job, referral_link, config, content_type):
     if not prompt_func:
         return None
     
-    system_prompt, user_prompt = prompt_func(job, referral_link, config)
+    system_prompt, user_prompt = prompt_func(job, referral_link, config, style_name)
     
     return call_nvidia(system_prompt, user_prompt, api_key)
 
@@ -526,14 +574,15 @@ def call_gemini(system_prompt, user_prompt, api_key):
         return None
 
 
-def generate_with_gemini(job, referral_link, config, content_type):
-    """Generate content using Gemini API"""
+def generate_with_gemini(job, referral_link, config, content_type, style_name=None):
+    """Generate content using Gemini API with optional style"""
+    style = get_style(style_name)
     api_key = config.get('gemini_api_key', '')
     if not api_key:
         print("  ⚠️  No Gemini API key configured")
         return None
     
-    system_prompt = build_system_prompt(config)
+    system_prompt = build_system_prompt(config, style_name)
     
     title = job.get('title', '')
     location = job.get('location', '')
@@ -561,72 +610,104 @@ def generate_with_gemini(job, referral_link, config, content_type):
             tags = ', '.join(found[:5]) if found else 'Relevant tech skills'
     
     if content_type == 'linkedin_post':
+        post = style['post']
         user_prompt = f"""Write a LinkedIn post about a job opening (this is for a CLIENT, not your own company):
 
 Job: {title}
 Location: {location}
 Skills (INCLUDE AT LEAST 2): {tags}
 
+STYLE: {style['name']}
+
+Voice: {post['voice']}
+Hook style: {post['hook_style']}
+Body style: {post['body_style']}
+Emoji usage: {post['emoji_usage']}
+
 Requirements:
 - Write in English
-- Hook: Short, attention-grabbing
-- Body: Brief but compelling
-- CTA: Say "Link in comments" — do NOT include any URL in the post body
-- Include 1-2 relevant hashtags
-- Keep under 2000 characters
-- Professional tone
+- Hook: {post['hook_style']}
+- Body: {post['body_style']}
+- CTA: {post['cta']}
+- Include {post['hashtag_count']} relevant hashtags
+- Keep under {post['linkedin_max']} characters
+- {post['emoji_usage']}
+- Write naturally, don't sound like AI
 
 Write ONE post only. No explanations."""
         
     elif content_type == 'x_post':
+        post = style['post']
         user_prompt = f"""Write a short X/Twitter post about a job opening (this is for a CLIENT, not your own company):
 
 Job: {title}
 Location: {location}
 Skills: {tags}
 
+STYLE: {style['name']}
+
+Voice: {post['voice']}
+Hook style: {post['hook_style']}
+
 Requirements:
 - Write in English
-- Hook: Attention-grabbing, short
-- Body: Brief, punchy, max 200 characters
-- CTA: Say "Link in comments" or "Link below 👇" — do NOT include any URL in the post body
-- Include 1-2 relevant hashtags max
-- Keep under 280 characters total
-- Professional tone
+- Hook: {post['hook_style']} (very short, max 80 chars)
+- Body: Short and punchy
+- CTA: {post['cta']}
+- Include {post['hashtag_count']} relevant hashtags max
+- Keep under {post['x_max']} characters total
+- {post['emoji_usage']}
+- Write naturally, don't sound like AI
 
 Write ONE tweet only. No explanations."""
         
     elif content_type == 'facebook_post':
+        post = style['post']
         user_prompt = f"""Write a Facebook post about a job opening (this is for a CLIENT, not your own company):
 
 Job: {title}
 Location: {location}
 Skills: {tags}
 
+STYLE: {style['name']}
+
+Voice: {post['voice']}
+Hook style: {post['hook_style']}
+
 Requirements:
 - Write in English
-- Hook: Short, attention-grabbing
-- Body: Brief but compelling
-- CTA: Say "Link in comments" — do NOT include any URL in the post body
-- Include relevant hashtags
-- Professional tone
+- Hook: {post['hook_style']}
+- Body: {post['body_style']}
+- CTA: {post['cta']}
+- Include {post['hashtag_count']} relevant hashtags
+- Keep under {post['facebook_max']} characters
+- {post['emoji_usage']}
+- Write naturally, don't sound like AI
 
 Write ONE post only. No explanations."""
         
     elif content_type == 'outreach_message':
-        user_prompt = f"""Write a professional LinkedIn connection request message for this job opening:
+        out = style['outreach']
+        user_prompt = f"""Write a LinkedIn connection request message for this job opening:
 
 Job: {title}
 Location: {location}
 Salary: {salary}
 Skills: {tags}
 
+STYLE: {style['name']}
+
+Voice: {out['voice']}
+Format: {out['format_notes']}
+
 Requirements:
 - This is a job opening from a CLIENT (not your own company)
-- Short (under 300 characters)
-- Professional tone — use "Hi" not "Hey"
-- Focus on the job opportunity
-- Include a subtle call to action
+- Short (under {out['max_chars']} characters)
+- Greeting: Use "{out['greeting']}"
+- Sign-off: Use "{out['signoff']}" (omit if blank)
+- {out['format_notes']}
+- {out['voice']}
+- Write naturally, don't sound like AI
 
 Write ONE message only. No explanations."""
         
@@ -1201,8 +1282,11 @@ def generate_boolean_query(job_title, job_description, tags, location):
     return " ".join(query_parts)
 
 
-def generate_outreach_message(job_title, job_description, location, salary, tags, referral_link=None, name=None):
-    """Generate a customized outreach message template for the job"""
+def generate_outreach_message(job_title, job_description, location, salary, tags, referral_link=None, name=None, style_name=None):
+    """Generate a customized outreach message template for the job, with optional style"""
+    style = get_style(style_name)
+    out = style['outreach']
+    
     key_skills = tags[:3] if tags else ["relevant skills"]
     skills_str = ", ".join(key_skills)
     clean_title = re.sub(r'\([^)]*\)', '', job_title).strip()
@@ -1210,7 +1294,6 @@ def generate_outreach_message(job_title, job_description, location, salary, tags
     salary_line = f" ({salary})" if salary else ""
     
     if not name:
-        # Try to get name from config as fallback
         try:
             with open('config.json', 'r', encoding='utf-8') as f:
                 config = json.load(f)
@@ -1218,7 +1301,8 @@ def generate_outreach_message(job_title, job_description, location, salary, tags
         except Exception:
             name = 'Your Name'
     
-    return f"""Hi [FirstName],
+    if style_name == "professional":
+        return f"""{out['greeting']} [FirstName],
 
 I came across your profile and was impressed by your background. We're helping a client fill a {clean_title} role {location_line}{salary_line}, and your experience seems like a strong match.
 
@@ -1226,7 +1310,75 @@ The role focuses on: {skills_str}.
 
 Would you be open to a quick chat to explore this opportunity?
 
-Best regards,
+{out['signoff']},
+{name}""".strip()
+    
+    elif style_name == "bold_edgy":
+        return f"""{out['greeting']} [FirstName],
+
+Your profile says you know {skills_str}. We're hiring a {clean_title} {location_line}{salary_line} — and it's not just another job post.
+
+This role actually ships. Real problems, real impact.
+
+Up for a conversation?
+
+{name}""".strip()
+    
+    elif style_name == "minimalist":
+        return f"""{out['greeting']} [FirstName],
+
+{clean_title} — {location_line}{salary_line}. Your skills ({skills_str}) fit.
+
+Open to a quick chat?
+
+{name}""".strip()
+    
+    elif style_name == "warm_empathetic":
+        return f"""{out['greeting']} [FirstName],
+
+Hope you're doing well! I came across your profile and was really impressed by your work with {skills_str}.
+
+I'm helping a client find a {clean_title} {location_line}{salary_line}, and I genuinely think this could be a great fit for someone with your background.
+
+No pressure at all — just wanted to reach out and see if you're curious.
+
+{out['signoff']},
+{name}""".strip()
+    
+    elif style_name == "storytelling":
+        return f"""{out['greeting']} [FirstName],
+
+I've been reaching out to engineers who really understand {skills_str}. Your work caught my attention.
+
+Here's the thing — I'm helping a client who needs a {clean_title} {location_line}{salary_line} for a genuinely interesting challenge. Not another CRUD app. Real depth.
+
+If that sounds like your kind of problem, I'd love to connect.
+
+{out['signoff']},
+{name}""".strip()
+    
+    elif style_name == "hype_builder":
+        return f"""{out['greeting']} [FirstName],
+
+I found something special and your profile came up. 🔥
+
+A client is hiring a {clean_title} {location_line}{salary_line} — and this is the kind of role that doesn't stay open long. {skills_str} is exactly what they need.
+
+Want to hear more?
+
+{name}""".strip()
+    
+    else:
+        # Default to professional-style template
+        return f"""{out['greeting']} [FirstName],
+
+I came across your profile and was impressed by your background. We're helping a client fill a {clean_title} role {location_line}{salary_line}, and your experience seems like a strong match.
+
+The role focuses on: {skills_str}.
+
+Would you be open to a quick chat to explore this opportunity?
+
+{out['signoff']},
 {name}""".strip()
 
 
@@ -1451,25 +1603,27 @@ def generate_authentic_hook(config, job, target_name):
     return hooks[0].format(title=title, bounty=bounty)
 
 
-def generate_linkedin_post(job, referral_link, config):
-    """Generate short LinkedIn main post (no external links)"""
+def generate_linkedin_post(job, referral_link, config, style_name=None):
+    """Generate short LinkedIn main post (no external links) with optional style"""
     # Try AI generation (NVIDIA first, then Qwen, then Gemini)
     if config.get('use_nvidia', False):
-        nvidia_result = generate_with_nvidia(job, referral_link, config, 'linkedin_post')
+        nvidia_result = generate_with_nvidia(job, referral_link, config, 'linkedin_post', style_name)
         if nvidia_result:
             return clean_content(nvidia_result.strip())
     
     if config.get('use_qwen', False):
-        qwen_result = generate_with_qwen(job, referral_link, config, 'linkedin_post')
+        qwen_result = generate_with_qwen(job, referral_link, config, 'linkedin_post', style_name)
         if qwen_result:
             return clean_content(qwen_result.strip())
     
     if config.get('use_gemini', False):
-        gemini_result = generate_with_gemini(job, referral_link, config, 'linkedin_post')
+        gemini_result = generate_with_gemini(job, referral_link, config, 'linkedin_post', style_name)
         if gemini_result:
             return clean_content(gemini_result.strip())
     
     # Fall back to template-based generation
+    style = get_style(style_name)
+    post_style = style['post']
     title = clean_title(job['title'])
     bounty = float(job.get('bounty', 0) or 0)
     location = job.get('location', '')
@@ -1480,18 +1634,90 @@ def generate_linkedin_post(job, referral_link, config):
     skills = extract_key_skills(desc, tags)
     skills_str = ", ".join(skills)
     
-    # Randomly select target audience
     target_name = select_target(config)
     target = config.get('targets', {}).get(target_name, {})
-    
     name = config.get('name', 'Your Name')
     role = config.get('role', 'Your Role')
-    
-    # Generate authentic hook
     authentic_hook = generate_authentic_hook(config, job, target_name)
+    hashtags = config.get('common_hashtags', '#Web3Jobs #UCTalent')
     
-    if target_name == 'talent':
+    if style_name == "bold_edgy":
         return clean_content(f"""{authentic_hook}
+
+Not another "we're hiring" post. This one's different.
+
+A client needs a {title} who actually ships.
+📍 {location or 'Remote'}
+💰 {salary or 'Competitive'}
+🔧 {skills_str}
+
+No LeetCode. No take-homes. Real engineering, real impact.
+
+Link in comments 👇
+
+{hashtags}""".strip())
+    
+    elif style_name == "minimalist":
+        return clean_content(f"""HIRING: {title}
+
+📍 {location or 'Remote'}
+💰 {salary or 'Competitive'}
+🔧 {skills_str}
+
+Link in comments
+
+{hashtags}""".strip())
+    
+    elif style_name == "warm_empathetic":
+        return clean_content(f"""{authentic_hook}
+
+I know the job market can be tough right now. Ghosting, black-hole applications, radio silence. It's exhausting.
+
+That's why I'm excited to share this role with you:
+
+I'm helping a client hire a {title}:
+📍 {location or 'Remote'}
+💰 {salary or 'Competitive'}
+🔧 {skills_str}
+
+Direct line to the hiring team. No ghosting. Just a genuine opportunity.
+
+🙌 If this speaks to you — or someone you know — check it out.
+
+{hashtags}""".strip())
+    
+    elif style_name == "storytelling":
+        return clean_content(f"""{authentic_hook}
+
+A client came to me last week with a problem: "We need a {title} who doesn't just write code — who thinks in systems."
+
+Most engineers can build features. Few can own architecture. That's who they're looking for.
+
+📍 {location or 'Remote'}
+💰 {salary or 'Competitive'}
+🔧 {skills_str}
+
+If this sounds like the kind of challenge you've been craving — let's talk.
+
+{hashtags}""".strip())
+    
+    elif style_name == "hype_builder":
+        return clean_content(f"""🚀 OPPORTUNITY ALERT: {title}
+
+This is one of those roles that doesn't hit the job boards. Direct access to the hiring team. Real impact from day one.
+
+📍 {location or 'Remote'}
+💰 {salary or 'Competitive'}
+🔧 {skills_str}
+
+If you've got the skills, this moves fast. Don't sleep on it. 🔥
+
+{hashtags}""".strip())
+    
+    else:
+        # Default: Professional style
+        if target_name == 'talent':
+            return clean_content(f"""{authentic_hook}
 
 The best engineers aren't on job boards — they're quietly scrolling LinkedIn, waiting for the right opportunity.
 
@@ -1506,9 +1732,9 @@ P.S. If you want an intro to the hiring team, DM me.
 
 {name} | {role}
 
-{config.get('common_hashtags', '#Web3Jobs #UCTalent')}""".strip())
-    else:
-        return clean_content(f"""{authentic_hook}
+{hashtags}""".strip())
+        else:
+            return clean_content(f"""{authentic_hook}
 
 Right now, one of our clients is hiring a {title}:
 📍 {location or 'Remote'}
@@ -1519,7 +1745,7 @@ Know someone who fits? Let me know!
 
 {name} | {role}
 
-{config.get('common_hashtags', '#Web3Jobs #UCTalent')}""".strip())
+{hashtags}""".strip())
 
 
 def generate_linkedin_comment(job, referral_link, config):
@@ -1532,23 +1758,24 @@ def generate_linkedin_comment(job, referral_link, config):
         return clean_content(f"Apply directly via our AI Agent:\n{referral_link}")
 
 
-def generate_x_post(job, referral_link, config):
-    """Generate short X/Twitter post (no external links)"""
+def generate_x_post(job, referral_link, config, style_name=None):
+    """Generate short X/Twitter post (no external links) with optional style"""
     if config.get('use_nvidia', False):
-        nvidia_result = generate_with_nvidia(job, referral_link, config, 'x_post')
+        nvidia_result = generate_with_nvidia(job, referral_link, config, 'x_post', style_name)
         if nvidia_result:
             return clean_content(nvidia_result.strip())
     
     if config.get('use_qwen', False):
-        qwen_result = generate_with_qwen(job, referral_link, config, 'x_post')
+        qwen_result = generate_with_qwen(job, referral_link, config, 'x_post', style_name)
         if qwen_result:
             return clean_content(qwen_result.strip())
     
     if config.get('use_gemini', False):
-        gemini_result = generate_with_gemini(job, referral_link, config, 'x_post')
+        gemini_result = generate_with_gemini(job, referral_link, config, 'x_post', style_name)
         if gemini_result:
             return clean_content(gemini_result.strip())
     
+    style = get_style(style_name)
     title = clean_title(job['title'])
     bounty = float(job.get('bounty', 0) or 0)
     location = job.get('location', '')
@@ -1560,17 +1787,58 @@ def generate_x_post(job, referral_link, config):
     salary_text = f"💰 {salary}" if salary else ""
     skills = extract_key_skills(desc, tags)[:2]
     skills_str = " + ".join(skills) if skills else ""
+    hashtags = config.get('common_hashtags', '#Web3Jobs #UCTalent')
     
-    target_name = select_target(config)
-    target = config.get('targets', {}).get(target_name, {})
-    
-    # Generate authentic hook
-    authentic_hook = generate_authentic_hook(config, job, target_name)
-    
-    if target_name == 'talent':
-        return clean_content(f"""{authentic_hook}
+    if style_name == "bold_edgy":
+        return clean_content(f"""Not your average job post.
 
-One client is hiring a {title}:
+Hiring a {title} {location_text}
+
+{skills_str}
+{salary_text}
+
+Link in comments 👇
+
+{hashtags}""")
+    
+    elif style_name == "minimalist":
+        return clean_content(f"""HIRING: {title}
+
+{location_text}
+{salary_text}
+{skills_str}
+
+Link in comments
+
+{hashtags}""")
+    
+    elif style_name == "warm_empathetic":
+        return clean_content(f"""Hey friends 👋
+
+Helping a client find a {title} {location_text}
+
+{salary_text}
+{skills_str}
+
+If this is you — or someone you know — Link in comments 💛
+
+{hashtags}""")
+    
+    elif style_name == "hype_builder":
+        return clean_content(f"""🚀 {title} — and this one's good.
+
+{location_text} | {salary_text}
+{skills_str}
+
+Link in comments 👇
+
+{hashtags}""")
+    
+    else:
+        # Default styles (Professional, Storytelling)
+        target_name = select_target(config)
+        if target_name == 'talent':
+            return clean_content(f"""Hiring a {title}:
 
 {skills_str}
 {salary_text}
@@ -1578,13 +1846,13 @@ One client is hiring a {title}:
 
 Link in comments 👇
 
-{config.get('common_hashtags', '#Web3Jobs #UCTalent')}""")
-    else:
-        return clean_content(f"""{authentic_hook}
+{hashtags}""")
+        else:
+            return clean_content(f"""Know someone who fits? {title} {location_text}
 
-Know someone who fits? Link in comments 👇
+Link in comments 👇
 
-{config.get('common_hashtags', '#Web3Jobs #UCTalent')}""")
+{hashtags}""")
 
 
 def generate_x_comment(job, referral_link, config):
@@ -1597,23 +1865,24 @@ def generate_x_comment(job, referral_link, config):
         return clean_content(f"Apply directly:\n{referral_link}")
 
 
-def generate_facebook_post(job, referral_link, config):
-    """Generate short Facebook post in English"""
+def generate_facebook_post(job, referral_link, config, style_name=None):
+    """Generate short Facebook post in English with optional style"""
     if config.get('use_nvidia', False):
-        nvidia_result = generate_with_nvidia(job, referral_link, config, 'facebook_post')
+        nvidia_result = generate_with_nvidia(job, referral_link, config, 'facebook_post', style_name)
         if nvidia_result:
             return clean_content(nvidia_result.strip())
     
     if config.get('use_qwen', False):
-        qwen_result = generate_with_qwen(job, referral_link, config, 'facebook_post')
+        qwen_result = generate_with_qwen(job, referral_link, config, 'facebook_post', style_name)
         if qwen_result:
             return clean_content(qwen_result.strip())
     
     if config.get('use_gemini', False):
-        gemini_result = generate_with_gemini(job, referral_link, config, 'facebook_post')
+        gemini_result = generate_with_gemini(job, referral_link, config, 'facebook_post', style_name)
         if gemini_result:
             return clean_content(gemini_result.strip())
     
+    style = get_style(style_name)
     title = clean_title(job['title'])
     location = job.get('location', '')
     salary = job.get('salary', '')
@@ -1624,14 +1893,49 @@ def generate_facebook_post(job, referral_link, config):
     salary_text = f"💰 {salary}" if salary else ""
     skills = extract_key_skills(desc, tags)
     skills_str = ", ".join(skills)
+    hashtags = config.get('common_hashtags', '#Web3Jobs #UCTalent')
     
     target_name = select_target(config)
-    
-    # Generate authentic hook
     authentic_hook = generate_authentic_hook(config, job, target_name)
     
-    if target_name == 'talent':
+    if style_name == "minimalist":
+        return clean_content(f"""HIRING: {title}
+
+{location_text}
+{salary_text}
+🔧 {skills_str}
+
+Link in comments
+
+{hashtags}""".strip())
+    
+    elif style_name == "warm_empathetic":
         return clean_content(f"""{authentic_hook}
+
+I'm helping a client find a {title} 🙌
+
+{location_text}
+{salary_text}
+🔧 {skills_str}
+
+If you or someone in your network might be interested — Link in comments 💛
+
+{hashtags}""".strip())
+    
+    elif style_name == "hype_builder":
+        return clean_content(f"""🚨 HOT OPPORTUNITY: {title}
+
+{location_text} | {salary_text}
+🔧 {skills_str}
+
+This one won't be open long. Link in comments 👇
+
+{hashtags}""".strip())
+    
+    else:
+        # Default styles (Professional, Bold, Storytelling)
+        if target_name == 'talent':
+            return clean_content(f"""{authentic_hook}
 
 We're hiring a {title}:
 
@@ -1641,9 +1945,9 @@ We're hiring a {title}:
 
 Link in comments 👇
 
-{config.get('common_hashtags', '#Web3Jobs #UCTalent')}""".strip())
-    else:
-        return clean_content(f"""{authentic_hook}
+{hashtags}""".strip())
+        else:
+            return clean_content(f"""{authentic_hook}
 
 Know someone who fits? We're hiring a {title}:
 
@@ -1653,7 +1957,7 @@ Know someone who fits? We're hiring a {title}:
 
 Link in comments 👇
 
-{config.get('common_hashtags', '#Web3Jobs #UCTalent')}""".strip())
+{hashtags}""".strip())
 
 
 def generate_facebook_comment(job, referral_link, config):
@@ -1709,11 +2013,11 @@ def generate_image_text(job, config):
     return "\n".join(lines)
 
 
-def open_draft_tabs(job, referral_link, config):
+def open_draft_tabs(job, referral_link, config, style_name=None):
     """Open draft tabs for each platform with pre-filled content (cross-platform via CDP)"""
-    linkedin_content = generate_linkedin_post(job, referral_link, config)
-    x_content = generate_x_post(job, referral_link, config)
-    fb_content = generate_facebook_post(job, referral_link, config)
+    linkedin_content = generate_linkedin_post(job, referral_link, config, style_name)
+    x_content = generate_x_post(job, referral_link, config, style_name)
+    fb_content = generate_facebook_post(job, referral_link, config, style_name)
     
     # Copy LinkedIn post to clipboard
     set_clipboard(linkedin_content)
@@ -1749,11 +2053,14 @@ def open_draft_tabs(job, referral_link, config):
 
 # ─── Content Generation ─────────────────────────────────────────────────────
 
-def generate_all_posts(results, config):
+def generate_all_posts(results, config, style_name=None):
     """Generate social media posts for jobs that have referral links (STEP 2 OF 2)"""
     print("=" * 70)
     print("STEP 2 OF 2: GENERATING SOCIAL MEDIA POSTS")
     print("=" * 70)
+    
+    style = get_style(style_name)
+    print(f"  🎨 Style: {style['name']}")
     
     results_with_posts = []
     for i, result in enumerate(results, 1):
@@ -1764,9 +2071,9 @@ def generate_all_posts(results, config):
             results_with_posts.append(result)
         else:
             print(f"  [{i}/{len(results)}] ✅ Generated: {result['title'][:50]}...")
-            result['linkedin_post'] = generate_linkedin_post(result, referral_link, config)
-            result['x_post'] = generate_x_post(result, referral_link, config)
-            result['facebook_post'] = generate_facebook_post(result, referral_link, config)
+            result['linkedin_post'] = generate_linkedin_post(result, referral_link, config, style_name)
+            result['x_post'] = generate_x_post(result, referral_link, config, style_name)
+            result['facebook_post'] = generate_facebook_post(result, referral_link, config, style_name)
             result['image_text'] = generate_image_text(result, config)
             result['linkedin_comment'] = generate_linkedin_comment(result, referral_link, config)
             result['x_comment'] = generate_x_comment(result, referral_link, config)
@@ -1776,11 +2083,14 @@ def generate_all_posts(results, config):
     return results_with_posts
 
 
-def open_draft_tabs_for_all(results, config):
+def open_draft_tabs_for_all(results, config, style_name=None):
     """Open draft tabs for first job with posts (STEP 2 OF 2)"""
     print("\n" + "=" * 70)
     print("STEP 2 OF 2: OPENING DRAFT TABS FOR SOCIAL POSTS")
     print("=" * 70)
+    
+    style = get_style(style_name)
+    print(f"  🎨 Style: {style['name']}")
     
     jobs_with_posts = [r for r in results if r.get('linkedin_post') and r['linkedin_post'] != 'Not generated']
     
@@ -1855,7 +2165,7 @@ def open_draft_tabs_for_all(results, config):
     confirm_drafts = input("Open draft tabs now? (y/n): ").strip().lower()
     
     if confirm_drafts == 'y':
-        linkedin_content, x_content, fb_content = open_draft_tabs(first_job, referral_link, config)
+        linkedin_content, x_content, fb_content = open_draft_tabs(first_job, referral_link, config, style_name)
         
         print("\n✅ Draft tabs opened!")
         print("📋 Instructions:")
