@@ -313,14 +313,34 @@ Instead of fully automating posts (which risks account restriction), this tool u
 - All jobs have been processed before. Wait for new bounty listings
 
 ### Profile extraction returns 0 results
-- Make sure you're viewing a Google search results page
-- Try scrolling the page first before running extraction
-- Page 2 extraction may fail if Google changes navigation
+Google no longer exposes the destination URL of a search result. Organic results
+are now wrapped in an opaque redirect token:
+
+```html
+<a href="/goto?url=CAESXAHrOzAVHv3SQ..." ping="/url?sa=t&...&url=CAES...">
+```
+
+`open_profiles.py` therefore works in two steps:
+1. Read every candidate link from the page (direct `/in/` hrefs **and** `/goto?url=` tokens).
+2. Resolve each token with a single **302-only** request (`allow_redirects=False`) —
+   no result page is ever loaded — and keep the links that resolve to `linkedin.com/in/`.
+
+If extraction still returns 0:
+- Make sure you're on the Google results page, not a profile tab. Re-run option 4
+  (Search) to re-register the tab with the automation.
+- Scroll the results once so the page finishes rendering, then retry.
+- The query may genuinely have no LinkedIn hits (too many quoted phrases).
+
+### Extraction opens redirect links, not real URLs
+Resolving `/goto?url=` tokens costs one lightweight 302 request per result
+(2 pages × ~10 results). It never loads a result page, so it is much lighter
+than a normal search, but keep the usual search rate limits in mind.
 
 ### LinkedIn URL Normalization
 - Country subdomains are automatically removed during extraction and display
 - Example: `https://vn.linkedin.com/in/name` → `https://linkedin.com/in/name`
 - Example: `https://uk.linkedin.com/in/johndoe` → `https://linkedin.com/in/johndoe`
+- Locale/detail suffixes are stripped: `/in/name/vi` → `/in/name`, `/in/name/details/` → `/in/name`
 - Preserves `www` prefix: `https://www.linkedin.com/in/name` stays unchanged
 - This ensures consistent URL format across all profiles
 

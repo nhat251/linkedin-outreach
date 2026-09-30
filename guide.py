@@ -31,10 +31,18 @@ from chrome_utils import (
 
 
 def normalize_linkedin_url(url):
-    """Remove country subdomain from LinkedIn URLs"""
-    if not url or 'linkedin.com/in/' not in url:
+    """Normalize a LinkedIn profile URL.
+
+    - Drops the country subdomain (vn.linkedin.com → linkedin.com)
+    - Drops locale/detail suffixes (/in/name/vi → /in/name)
+    - Strips query string and trailing slash
+    """
+    if not url or 'linkedin.com' not in url:
         return url
-    return re.sub(r'(?!ww)[a-z]{2}\.linkedin\.com', 'linkedin.com', url)
+    url = url.split('?')[0].rstrip('/')
+    url = re.sub(r'\b[a-z]{2}\.linkedin\.com', 'linkedin.com', url)
+    url = re.sub(r'(linkedin\.com/in/[^/]+)/(?:[a-z]{2}|details)(?:/.*)?$', r'\1', url)
+    return url
 
 
 def normalize_job_profiles(job):
@@ -478,7 +486,7 @@ def work_on_job_menu(num, job, xlsx_file, rows, fieldnames):
         print(f"    🔗 Referral Link: {'✅' if has_link else '❌ (do step 1)'}")
         print(f"    📝 Outreach Msg:  {'✅' if job.get('outreach_message') else '❌ (do step 2)'}")
         print(f"    📢 Social Posts:  {'✅' if has_posts else '❌ (do step 3)'}")
-        print(f"    👥 LinkedIn Profs: {'✅' if has_profiles else '❌ (do step 4)'}")
+        print(f"    👥 LinkedIn Profs: {'✅' if has_profiles else '❌ (do step 5)'}")
         print()
         
         print("  Options:")
