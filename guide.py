@@ -155,6 +155,34 @@ def _poll_js(check_js, timeout=25, interval=1.5):
     return None
 
 
+def build_job_url(title, job_id):
+    """Build the UCTalent job detail URL for a job."""
+    encoded_title = title.replace(' ', '-').replace('/', '-')
+    return f"https://uctalent.io/jobs/detail/{urllib.parse.quote(encoded_title)}.{job_id}"
+
+
+def fetch_referral_link(job_url, job_title):
+    """Open the job page and get its referral link automatically.
+
+    Opens the page, clicks "Refer & Earn", waits for the modal, and reads the
+    link (also putting it on the clipboard). Returns None if anything goes
+    wrong, so the caller can fall back to asking the user.
+    """
+    try:
+        from uctalent_referral import fetch_referral_link as _fetch
+    except Exception as e:
+        print(f"   ⚠️  Referral automation unavailable: {e}")
+        return None
+
+    try:
+        open_url_in_tab(job_url)
+        print(f"   ✅ Opened: {job_url}")
+        return _fetch(job_title=job_title, verbose=True)
+    except Exception as e:
+        print(f"   ⚠️  Could not fetch referral link: {e}")
+        return None
+
+
 def clear():
     os.system('clear' if os.name == 'posix' else 'cls')
 
@@ -479,29 +507,36 @@ def work_on_job_menu(num, job, xlsx_file, rows, fieldnames):
     
 # Step 1: Get referral link (opens job page) - ONLY if no link
     if not has_link:
-        print("\n1️⃣  Opening job page for referral link...")
+        print("\n1️⃣  Getting referral link...")
         job_id = job.get('id', '')
         title = job.get('title', '')
         if job_id and title:
-            encoded_title = title.replace(' ', '-').replace('/', '-')
-            job_url = f"https://uctalent.io/jobs/detail/{urllib.parse.quote(encoded_title)}.{job_id}"
-            open_url_in_tab(job_url)
-            print(f"   ✅ Opened: {job_url}")
-            print("\n   📋 Click 'Refer & Earn' → 'COPY LINK', then paste below:")
-            print("     (or press Enter to skip)")
-            link = input("   Referral link: ").strip()
+            job_url = build_job_url(title, job_id)
+            link = fetch_referral_link(job_url, title)
             if link:
                 referral_link = link
                 has_link = True
                 clean_link = link
                 job['referral_link'] = link
                 for r in rows:
-                    if r.get('title', '').strip().lower() == job.get('title', '').strip().lower():
+                    if r.get('title', '').strip().lower() == title.strip().lower():
                         r['referral_link'] = link
                         break
                 print("   ✅ Referral link saved!")
             else:
-                print("   ⏭️  Skipped.")
+                link = input("   Paste the referral link (or press Enter to skip): ").strip()
+                if link:
+                    referral_link = link
+                    has_link = True
+                    clean_link = link
+                    job['referral_link'] = link
+                    for r in rows:
+                        if r.get('title', '').strip().lower() == title.strip().lower():
+                            r['referral_link'] = link
+                            break
+                    print("   ✅ Referral link saved!")
+                else:
+                    print("   ⏭️  Skipped.")
     
     # Step 2: Generate outreach message (always, if not exists)
     if not job.get('outreach_message'):
@@ -633,52 +668,54 @@ def work_on_job_menu(num, job, xlsx_file, rows, fieldnames):
 
 
 def get_referral_link(num, job, xlsx_file, rows, fieldnames):
-    """Open job page, then ask user to paste referral link in terminal"""
+    """Open the job page, click Refer & Earn, and save the link"""
     clear()
     print("=" * 70)
     print(f"  Job #{num}: Get Referral Link")
     print("=" * 70)
     print()
-    
+
     job_id = job.get('id', '')
     title = job.get('title', '')
-    
+
     if not job_id:
         print("  ⚠️  No job ID in file.")
         print("  Please run STEP 2 (Fetch Jobs) to get the job ID.")
         input("\nPress Enter to continue...")
         return
-    
-    if title:
-        encoded_title = title.replace(' ', '-').replace('/', '-')
-        job_url = f"https://uctalent.io/jobs/detail/{urllib.parse.quote(encoded_title)}.{job_id}"
-        open_url_in_tab(job_url)
-        print(f"  ✅ Opened: {job_url}")
-    else:
+
+    if not title:
         print("  ⚠️  No job title found.")
-    
-    print()
-    print("  1. Click 'Refer & Earn' button (right sidebar)")
-    print("  2. Click 'COPY LINK' button")
-    print()
-    print("  📋 Then paste the link below:")
-    print("     (or press Enter to skip)")
-    print()
-    link = input("  Referral link: ").strip()
-    
+        input("\nPress Enter to continue...")
+        return
+
+    job_url = build_job_url(title, job_id)
+    link = fetch_referral_link(job_url, title)
+
+    if not link:
+        # Automation failed — fall back to the manual flow
+        print()
+        print("  📋 Fall back to manual: click 'Refer & Earn' → 'Copy Link'")
+        print("     (or press Enter to skip)")
+        print()
+        link = input("  Referral link: ").strip()
+
     if link:
         # Update job in memory
         job['referral_link'] = link
-        
+
         # Update the row in the rows list
         for r in rows:
             if r.get('title', '').strip().lower() == job.get('title', '').strip().lower():
                 r['referral_link'] = link
                 break
-        
+
         # Save to XLSX
         save_xlsx_jobs(xlsx_file, rows, fieldnames)
         print(f"\n  ✅ Referral link saved!")
+    else:
+        print("\n  ⏭️  Skipped.")
+
 
 
 def generate_outreach_for_job(num, job, xlsx_file, rows, fieldnames):

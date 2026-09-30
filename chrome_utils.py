@@ -267,6 +267,34 @@ def execute_js(js_code, timeout=10, target_tab=None):
         return None
 
 
+# ─── Polling ─────────────────────────────────────────────────────────────────
+
+def poll_js(check_js, timeout=25, interval=1.0, truthy_only=False):
+    """Poll a JS snippet until it returns something (or a truthy value).
+
+    Needed whenever a click causes a page navigation: execute_js returns None
+    while the old document is being torn down, so a fixed sleep races it.
+    Returns the first non-empty result, or None on timeout.
+    """
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            result = execute_js(check_js, timeout=10)
+        except Exception:
+            result = None
+        if result is None:
+            time.sleep(interval)
+            continue
+        if truthy_only:
+            # JS returned a string we cast to Python — treat "found"/"ok" as hit
+            if str(result).strip().lower() in ('found', 'ok', 'clicked', 'true'):
+                return result
+        elif str(result).strip():
+            return result
+        time.sleep(interval)
+    return None
+
+
 # ─── URL Opening (High-Level) ───────────────────────────────────────────────
 
 # File to persist the last opened tab_id across Python processes

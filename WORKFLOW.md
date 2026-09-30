@@ -12,6 +12,7 @@ Semi-automated LinkedIn outreach system for UCTalent bounty jobs. Fetches job li
 |------|---------|
 | `guide.py` | **Start here** — Interactive step-by-step wizard |
 | `linkedin_outreach.py` | Main script: fetches jobs, generates queries & messages |
+| `uctalent_referral.py` | Clicks Refer & Earn and captures the referral link |
 | `open_profiles.py` | Extracts LinkedIn profile URLs from Google search results |
 | `collect_founder_logs.py` | Collect your authentic stories/opinions for content |
 | `config.json` | Personal context & brand voice configuration |
@@ -109,7 +110,8 @@ Runs `linkedin_outreach.py`:
 ### STEP 3: Work on Individual Jobs
 Select a job number. When you enter a job, it **automatically** prepares:
 
-1. **🔗 Opens job page** for manual referral link copying (if no link exists)
+1. **🔗 Fetches the referral link** (if no link exists) — opens the job page, clicks
+   **Refer & Earn**, waits for the modal, reads the link and puts it on your clipboard
 2. **📝 Generates outreach message** if not exists
 3. **📢 Generates social posts** (LinkedIn, X, Facebook) if referral link exists but posts don't
 
@@ -285,9 +287,36 @@ Instead of fully automating posts (which risks account restriction), this tool u
 ## Troubleshooting
 
 ### "Could not find referral link"
-- This is expected. Referral links are dynamically generated when you click "Refer & Earn"
-- Use option "1. Get Referral Link" in STEP 3 to open the job page
-- Then manually copy the link to CSV
+This is handled automatically now — see `uctalent_referral.py`. If it ever
+falls back to asking you to paste, the usual causes are:
+- Not signed in to UCTalent in the automation profile (`C:\chrome-debug`)
+- The job page 404s (stale `id` in the sheet — re-run step 2 to refresh)
+
+### How the referral link is fetched
+`uctalent_referral.py` runs the whole flow with no clicking from you:
+
+1. **Waits for the `Refer & Earn` *button*** — the job page is a React SPA, so the
+   button can render after the page load event fires.
+2. **Clicks it** — and only ever a `<button>`. There is also an
+   `<a href="/refer-earn">` with the same caption that would navigate away from
+   the job page, so anchors are never clicked.
+3. **Polls the modal** until the link appears (no fixed sleep).
+4. **Reads the link from the DOM.** The modal displays it truncated with CSS
+   ellipsis; the full URL is in the text, so it is read from there.
+5. **Verifies the modal title** says "You're referring a candidate to *this job*".
+   The referral URL is opaque and contains no job id, so this title is the only
+   way to be sure the link belongs to the job being worked on. A mismatch aborts
+   rather than saving someone else's link.
+6. **Clicks `Copy Link`** and makes sure the clipboard really holds this link.
+
+Two site details worth knowing if you ever debug this:
+- The modal root is `.MuiModal-root` with `role="presentation"`. The page's only
+  `[role="dialog"]` is an unrelated empty element, so scoping to it finds nothing.
+- The site's own copy does **not** update the clipboard from automation: a
+  synthetic click does not satisfy the user-gesture requirement of
+  `navigator.clipboard.writeText`. The clipboard can therefore still hold the
+  *previous* job's link, which is why the link is never read from the clipboard —
+  if the copy does not take, the value is written directly instead.
 
 ### "Chrome remote debugging not accessible" (Windows)
 - Make sure Chrome is running with `--remote-debugging-port=9222 --remote-allow-origins=* --user-data-dir="C:\chrome-debug"`
