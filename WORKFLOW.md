@@ -336,6 +336,26 @@ Resolving `/goto?url=` tokens costs one lightweight 302 request per result
 (2 pages × ~10 results). It never loads a result page, so it is much lighter
 than a normal search, but keep the usual search rate limits in mind.
 
+### "Could not find 'Start a post' button" / composer doesn't fill
+LinkedIn changed its composer, so the old selectors no longer work:
+
+| Old assumption | Reality now |
+|----------------|-------------|
+| `aria-label="Start a post"` / `"Bắt đầu bài viết"` | No `aria-label` at all; it's a `div[role="button"]` whose text is **"Bắt đầu bài đăng"** (wording changed from *bài viết*) |
+| Share box is a modal | It **navigates to `/sharing/compose`** |
+| Editor is Quill (`.ql-editor`, `.ql-blank`) | Editor is **TipTap + ProseMirror** (`role="textbox"`, `[contenteditable="true"]`) |
+| `innerHTML = html` fills the editor | ProseMirror **ignores** it — text must go through `execCommand('insertText')` |
+| Stable class names | Class names are **hashed** (`auyll5 auyguo auyhq4`) and change between deploys |
+
+`view_posts()` now matches on role/text only, waits for the `/sharing/compose`
+page to hydrate before filling, and falls back to opening the composer URL
+directly if the share box can't be found. It never clicks **Đăng bài** — review
+and publish manually.
+
+If it still fails, the most common cause is not being signed in to LinkedIn in
+the automation profile (`C:\chrome-debug`): the feed then has no share box at
+all.
+
 ### LinkedIn URL Normalization
 - Country subdomains are automatically removed during extraction and display
 - Example: `https://vn.linkedin.com/in/name` → `https://linkedin.com/in/name`

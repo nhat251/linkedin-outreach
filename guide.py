@@ -54,6 +54,107 @@ def normalize_job_profiles(job):
     return job
 
 
+# ─── LinkedIn Composer ───────────────────────────────────────────────────────
+# LinkedIn ships hashed CSS class names (e.g. "auyll5 auyguo auyhq4") and
+# obfuscates them between deploys, so nothing here may depend on a class name.
+# The composer is a separate page (/sharing/compose) whose editor is TipTap +
+# ProseMirror now — an innerHTML assignment is silently ignored, the text has
+# to go in through the real input pipeline.
+
+LINKEDIN_FEED = "https://www.linkedin.com/feed/"
+LINKEDIN_COMPOSE = "https://www.linkedin.com/sharing/compose"
+
+# Wording note: the Vietnamese trigger used to be "Bắt đầu bài viết" and is
+# now "Bắt đầu bài đăng". There is no aria-label on the trigger at all.
+JS_CLICK_SHARE_BOX = """(function() {
+    var want = ['Start a post', 'Bắt đầu bài đăng', 'Bắt đầu bài viết'];
+    function norm(s) { return (s || '').replace(/\\s+/g, ' ').trim(); }
+    var pool = Array.prototype.slice.call(
+        document.querySelectorAll('[role="button"], button'));
+    for (var i = 0; i < pool.length; i++) {
+        var el = pool[i];
+        var label = norm(el.getAttribute('aria-label')) || norm(el.innerText);
+        if (want.indexOf(label) === -1) { continue; }
+        // Several hidden responsive duplicates exist — only click a visible one
+        var r = el.getBoundingClientRect();
+        if (r.width < 40 || r.height < 20) { continue; }
+        el.scrollIntoView({ block: 'center' });
+        ['mousedown', 'mouseup', 'click'].forEach(function(type) {
+            el.dispatchEvent(new MouseEvent(type, {
+                bubbles: true, cancelable: true, view: window, button: 0
+            }));
+        });
+        return 'clicked';
+    }
+    return 'not_found';
+})()"""
+
+# The editor lives in the main document on the compose page, but older
+# layouts put it in the #interop-outlet shadow root — check both.
+# A function *expression* so it can be embedded in either snippet below.
+JS_FIND_EDITOR = """(function() {
+    var host = document.querySelector('#interop-outlet');
+    var roots = [document];
+    if (host && host.shadowRoot) { roots.unshift(host.shadowRoot); }
+    for (var r = 0; r < roots.length; r++) {
+        var ed = roots[r].querySelector(
+            '.ql-editor[contenteditable="true"], ' +
+            'div[role="textbox"][contenteditable="true"], ' +
+            '[contenteditable="true"]'
+        );
+        if (ed) { return ed; }
+    }
+    return null;
+})"""
+
+# Returns 'found' when an editor is present, '' otherwise (keeps _poll_js waiting)
+JS_HAS_EDITOR = (
+    "(function() {"
+    "    var findEditor = " + JS_FIND_EDITOR + ";"
+    "    return findEditor() ? 'found' : '';"
+    "})()"
+)
+
+JS_FILL_EDITOR = (
+    "(function() {\n"
+    "    var findEditor = " + JS_FIND_EDITOR + ";\n"
+    "    var ed = findEditor();\n"
+    "    if (!ed) { return 'editor_not_found'; }\n"
+    "    var text = __TEXT__;\n"
+    "    ed.focus();\n"
+    "    try {\n"
+    "        document.execCommand('selectAll', false, null);\n"
+    "        document.execCommand('delete', false, null);\n"
+    "        if (document.execCommand('insertText', false, text)) { return 'filled'; }\n"
+    "    } catch (e) {}\n"
+    "    var html = text.split('\\n').map(function(p) {\n"
+    "        return '<p>' + p.replace(/</g, '&lt;') + '</p>';\n"
+    "    }).join('');\n"
+    "    ed.innerHTML = html;\n"
+    "    ed.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));\n"
+    "    return 'filled';\n"
+    "})()"
+)
+
+
+def _poll_js(check_js, timeout=25, interval=1.5):
+    """Poll a JS snippet until it returns a non-empty value or we time out.
+
+    Needed because the composer navigates to a new page, so execute_js can
+    return None while the old document is being torn down.
+    """
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            result = execute_js(check_js, timeout=10)
+        except Exception:
+            result = None
+        if result and str(result).strip():
+            return result
+        time.sleep(interval)
+    return None
+
+
 def clear():
     os.system('clear' if os.name == 'posix' else 'cls')
 
@@ -882,71 +983,43 @@ def view_posts(num, job, xlsx_file, rows, fieldnames):
     confirm = input("Open draft tabs in Chrome? (y/n): ").strip().lower()
     if confirm == 'y':
         referral_link = job.get('referral_link', '')
-        
-        # Open LinkedIn feed + click "Start a post" (exact selector avoids sidebar "Post impressions")
-        open_url_in_tab("https://www.linkedin.com/feed/")
+
+        # Open LinkedIn feed, then click the share box.
+        # LinkedIn obfuscates its CSS class names, so we match on role/text
+        # instead of .share-box-v2__trigger, and the Vietnamese wording of the
+        # trigger changed from "Bắt đầu bài viết" to "Bắt đầu bài đăng".
+        open_url_in_tab(LINKEDIN_FEED)
         print("  ⏳ Waiting for LinkedIn to load...")
         time.sleep(3)
-        # Step 1: Click "Start a post"
-        js_click = """(function() {
-            // Try exact aria-label match (div, not button)
-            var btn = document.querySelector('[aria-label="Start a post"], [aria-label="Bắt đầu bài viết"]');
-            if (!btn) { btn = document.querySelector('[role="combobox"]'); }
-            if (!btn) { return 'not_found'; }
-            // Click the anchor parent if exists (React needs native-like click)
-            var anchor = btn.closest('a');
-            if (anchor) {
-                // Dispatch proper mouse events for React synthetic events
-                ['mousedown', 'mouseup', 'click'].forEach(function(type) {
-                    anchor.dispatchEvent(new MouseEvent(type, {bubbles: true, cancelable: true, view: window, button: 0}));
-                });
-            } else {
-                btn.click();
-            }
-            return 'clicked';
-        })();"""
-        result = execute_js(js_click, timeout=15)
-        if result != 'clicked':
-            print("  ⚠️  Could not find 'Start a post' button. Try clicking it manually.")
+
+        fill_js = JS_FILL_EDITOR.replace('__TEXT__', json.dumps(linkedin_post))
+
+        # Reuse the composer if it is already open (retry / previous attempt)
+        if _poll_js(JS_HAS_EDITOR, timeout=3):
+            print("  ℹ️  Composer already open. Filling text...")
+            status = execute_js(fill_js, timeout=25)
         else:
-            print("  ✅ Compose box opened. Filling text...")
-            time.sleep(2)
-            # Step 2: Find the Quill editor by trying multiple selectors (with retries)
-            js_fill = f"""(function() {{
-                // The compose modal lives inside a Shadow DOM (#interop-outlet)
-                var host = document.querySelector('#interop-outlet');
-                var root = host ? (host.shadowRoot || host) : document;
-                // Try multiple selectors for the editor (in shadow root first, then fallback to document)
-                var editor = root.querySelector(
-                    '.ql-editor[contenteditable="true"], ' +
-                    '.share-box-v2__modal .ql-editor, ' +
-                    'div[role="textbox"][contenteditable="true"], ' +
-                    '.editor-container [contenteditable="true"]'
-                );
-                if (!editor) {{ return 'editor_not_found'; }}
-                editor.focus();
-                // Convert text to HTML paragraphs for Quill editor
-                var text = {json.dumps(linkedin_post)};
-                var paragraphs = text.split('\\n');
-                var html = paragraphs.map(function(p) {{ return '<p>' + p.replace(/</g, '&lt;') + '</p>'; }}).join('');
-                editor.innerHTML = html;
-                // Remove ql-blank class so placeholder disappears
-                editor.classList.remove('ql-blank');
-                // Dispatch input event so Quill registers the change
-                editor.dispatchEvent(new Event('input', {{ bubbles: true, cancelable: true }}));
-                return 'filled';
-            }})();"""
-            # Retry fill up to 3 times with 1s delay (in case modal is still animating)
-            result2 = None
-            for attempt in range(3):
-                result2 = execute_js(js_fill, timeout=10)
-                if result2 == 'filled':
-                    break
-                time.sleep(1)
-            if result2 == 'filled':
-                print("  ✅ Post text filled! Review and publish.")
+            status = execute_js(JS_CLICK_SHARE_BOX, timeout=20)
+            if status != 'clicked':
+                print("  ⚠️  Could not find the share box — opening composer directly.")
+                navigate_to_url(LINKEDIN_COMPOSE)
             else:
-                print("  ⚠️  Editor not found. Paste manually.")
+                print("  ✅ Compose box opened. Filling text...")
+
+            # The share box is a separate page now (/sharing/compose), so wait
+            # for it to load and hydrate before touching the editor.
+            if not _poll_js(JS_HAS_EDITOR, timeout=30):
+                status = 'composer_missing'
+            else:
+                status = execute_js(fill_js, timeout=25)
+
+        if status == 'filled':
+            print("  ✅ Post text filled! Review and publish.")
+        elif status == 'composer_missing':
+            print("  ⚠️  Composer did not open. Paste manually.")
+        else:
+            print("  ⚠️  Could not fill the editor. Paste manually.")
+
         # Auto-open X with pre-filled text
         x_post = job.get('x_post', '')
         x_text = x_post if x_post else linkedin_post
