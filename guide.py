@@ -177,10 +177,22 @@ def fetch_referral_link(job_url, job_title):
     try:
         open_url_in_tab(job_url)
         print(f"   ✅ Opened: {job_url}")
-        return _fetch(job_title=job_title, verbose=True)
+        link, info = _fetch(job_title=job_title, verbose=True)
     except Exception as e:
         print(f"   ⚠️  Could not fetch referral link: {e}")
         return None
+
+    if not link:
+        return None
+
+    # A link attributed to a headhunter only pays 80% (uctalent.io's own
+    # "net earning" tooltip). An internal referrer gets 100%, which is what the
+    # /referral/quick_process/ links with utm_content=recruiter indicate.
+    if info.get('kind') == 'legacy':
+        print("   ⚠️  This is an older headhunter-style link (80% net).")
+        print("      Re-fetch it after signing in on the internal account for 100%.")
+
+    return link
 
 
 def clear():
