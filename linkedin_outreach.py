@@ -70,8 +70,15 @@ def clean_content(text):
     text = re.sub(r'^\*', '', text, flags=re.MULTILINE)  # leading asterisk
     text = re.sub(r'\*$', '', text, flags=re.MULTILINE)  # trailing asterisk
     
-    # Remove markdown underscores for emphasis
-    text = re.sub(r'_([^_]+)_', r'\1', text)
+    # Remove markdown underscores for emphasis.
+    # Only pairs that sit inside a word count, and never inside a URL: this
+    # rule used to turn utm_source=headhunter into utmsource=headhunter, which
+    # silently broke the tracking on every saved referral link.
+    text = re.sub(
+        r'(?<![/\w])_(?![\s_])([^_\n]+?)(?<![\s_])_(?![\w/])',
+        r'\1',
+        text
+    )
     
     # Remove excessive newlines (more than 2 -> make exactly 2)
     text = re.sub(r'\n{3,}', '\n\n', text)
@@ -511,24 +518,60 @@ def generate_with_nvidia(job, referral_link, config, content_type, style_name=No
     return call_nvidia(system_prompt, user_prompt, api_key)
 
 
+# Gemini models, best first.
+#
+# Gemini moves fast and the aliases rot quickly. Measured on this project's key:
+#
+#   gemini-3.5-flash-lite  stable, ~2s   <- lead
+#   gemini-2.5-flash       stable, ~2s   <- fallback (still served, older)
+#   gemini-3.1-flash-lite  works but ~17-85s, too slow to wait on
+#   gemini-3.6/3.7/3.8     503 "high demand" or connection timeouts
+#   gemini-3-flash-preview 503 "high demand"
+#   gemini-2.0-flash       404 retired, was the old fallback here
+#
+# Set "gemini_model" in config.json to pin one explicitly.
+GEMINI_MODELS = [
+    "gemini-3.5-flash-lite",
+    "gemini-2.5-flash",
+    "gemini-3.1-flash-lite",
+]
+
+# 503 = overloaded, 429 = quota. Both are worth another model, not a crash.
+_GEMINI_RETRYABLE = ("503", "429", "UNAVAILABLE", "RESOURCE_EXHAUSTED",
+                     "high demand", "overloaded")
+
+
 def call_gemini(system_prompt, user_prompt, api_key):
-    """Call Gemini 3 Flash Preview using google-genai SDK with retry"""
+    """Call Gemini via the google-genai SDK, falling back across models.
+
+    Tries each model in GEMINI_MODELS (or config["gemini_model"]) in turn,
+    retrying a busy model once after a short wait before moving on.
+    """
+    import os
     import time
-    
+
     try:
         from google import genai
-        
-        # Set the API key
-        import os
-        os.environ["GEMINI_API_KEY"] = api_key
-        
-        client = genai.Client()
-        
-        # Retry up to 2 times on 503 errors
+    except ImportError:
+        print("  ⚠️  google-genai not installed. Run: pip install google-genai")
+        return None
+
+    try:
+        config = load_config()
+        models = config.get('gemini_model') or GEMINI_MODELS
+        if isinstance(models, str):
+            models = [models]
+    except Exception:
+        models = GEMINI_MODELS
+
+    os.environ["GEMINI_API_KEY"] = api_key
+    client = genai.Client()
+
+    for model in models:
         for attempt in range(2):
             try:
                 response = client.models.generate_content(
-                    model="gemini-3-flash-preview",
+                    model=model,
                     contents=user_prompt,
                     config={
                         "system_instruction": system_prompt,
@@ -536,44 +579,30 @@ def call_gemini(system_prompt, user_prompt, api_key):
                         "max_output_tokens": 2048
                     }
                 )
-                
+
                 if response.text:
+                    if model != models[0]:
+                        print(f"  ℹ️  Used fallback model: {model}")
                     return response.text
-                    
+                break
+
             except Exception as e:
                 error_str = str(e)
-                if "503" in error_str or "UNAVAILABLE" in error_str or "high demand" in error_str:
-                    if attempt < 1:
-                        print(f"  ⏳ Model busy, retrying in 2 seconds...")
-                        time.sleep(2)
-                        continue
-                    else:
-                        print("  ⚠️  Gemini 3 overloaded, trying gemini-2.0-flash...")
-                        try:
-                            response = client.models.generate_content(
-                                model="gemini-2.0-flash",
-                                contents=user_prompt,
-                                config={
-                                    "system_instruction": system_prompt,
-                                    "temperature": 0.9,
-                                    "max_output_tokens": 2048
-                                }
-                            )
-                            return response.text
-                        except:
-                            print("  ⚠️  All Gemini models unavailable")
-                            return None
-                else:
-                    raise
-        
-        return None
-        
-    except ImportError:
-        print("  ⚠️  google-genai not installed. Run: pip install google-genai")
-        return None
-    except Exception as e:
-        print(f"  ⚠️  Gemini API error: {e}")
-        return None
+                if not any(token in error_str for token in _GEMINI_RETRYABLE):
+                    print(f"  ⚠️  Gemini error ({model}): {error_str[:150]}")
+                    break
+
+                if attempt < 1:
+                    print(f"  ⏳ {model} busy, retrying in 2s...")
+                    time.sleep(2)
+                    continue
+
+                status = "quota" if "429" in error_str else "overloaded"
+                print(f"  ⚠️  {model} {status}, trying next model...")
+                break
+
+    print("  ⚠️  All Gemini models unavailable — using template fallback")
+    return None
 
 
 def generate_with_gemini(job, referral_link, config, content_type, style_name=None):

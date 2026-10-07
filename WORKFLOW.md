@@ -419,6 +419,18 @@ If it still fails, the most common cause is not being signed in to LinkedIn in
 the automation profile (`C:\chrome-debug`): the feed then has no share box at
 all.
 
+### Referral links in comments must keep their UTM parameters
+`clean_content()` strips markdown emphasis like `_word_` → `word`. That rule used
+to be greedy enough to strip the underscore out of a URL query string, turning
+
+```
+?utm_source=headhunter&utm_medium=referral
+```
+
+into `?utmsource=headhunter&utmmedium=referral`, which breaks attribution on
+every shared link. The rule now skips URLs and words like `utm_source` that sit
+inside a word. If you paste a link by hand, check the underscores survived.
+
 ### LinkedIn URL Normalization
 - Country subdomains are automatically removed during extraction and display
 - Example: `https://vn.linkedin.com/in/name` → `https://linkedin.com/in/name`
@@ -426,6 +438,26 @@ all.
 - Locale/detail suffixes are stripped: `/in/name/vi` → `/in/name`, `/in/name/details/` → `/in/name`
 - Preserves `www` prefix: `https://www.linkedin.com/in/name` stays unchanged
 - This ensures consistent URL format across all profiles
+
+### "model unavailable" / Gemini errors
+Gemini's model aliases change and get retired quickly, so `call_gemini()` walks a
+list instead of pinning one:
+
+| Model | Behaviour measured on this project's key |
+|-------|------------------------------------------|
+| `gemini-3.5-flash-lite` | stable, ~2s — lead |
+| `gemini-2.5-flash` | stable, ~2s — fallback |
+| `gemini-3.1-flash-lite` | works, but 17–85s |
+| `gemini-3.6/3.7/3.8-flash` | 503 "high demand" or connection timeout |
+| `gemini-3-flash-preview` | 503 "high demand" |
+| `gemini-2.0-flash` | 404 retired (was the old fallback here) |
+
+A 503 or 429 moves to the next model; anything else (bad key, 404 on the model
+name) is reported and the run falls back to templates. Pin one explicitly with
+`"gemini_model": "..."` in `config.json` if you would rather not fall back.
+
+If every model is down, content still generates from the built-in templates, so
+a run is not wasted.
 
 ### Qwen API Returns Empty
 - Verify your API key is from **Model Studio international** (not China)
