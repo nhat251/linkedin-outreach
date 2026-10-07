@@ -419,6 +419,23 @@ If it still fails, the most common cause is not being signed in to LinkedIn in
 the automation profile (`C:\chrome-debug`): the feed then has no share box at
 all.
 
+### Step 3 is sequential, and that is deliberate
+The three main posts are three independent AI round-trips, so it is tempting to
+fire them at once. Measured, that does not pay off — Gemini throttles concurrent
+requests:
+
+| | wall clock |
+|---|---|
+| Sequential | 9–11s typical |
+| Three in parallel | 4–25s, no reliable gain |
+
+The occasional single call taking 20–60s is provider-side variance, not
+something concurrency fixes. Both `generate_*_post` calls run one after another.
+
+`image_text` and the three comments never touch an API — they pick a random
+target audience (`select_target`) and paste the referral link into one of two
+fixed strings, so they take no measurable time.
+
 ### Referral links in comments must keep their UTM parameters
 `clean_content()` strips markdown emphasis like `_word_` → `word`. That rule used
 to be greedy enough to strip the underscore out of a URL query string, turning

@@ -161,6 +161,68 @@ def build_job_url(title, job_id):
     return f"https://uctalent.io/jobs/detail/{urllib.parse.quote(encoded_title)}.{job_id}"
 
 
+# Columns step 3 fills in, in the order they are generated.
+POST_FIELDS = [
+    'linkedin_post', 'x_post', 'facebook_post', 'image_text',
+    'linkedin_comment', 'x_comment', 'facebook_comment',
+]
+
+
+def generate_all_posts(job, referral_link, style_name, verbose=True):
+    """Generate every piece of content for a job.
+
+    Kept sequential on purpose. Firing the three posts at a ThreadPoolExecutor
+    was measured and does not pay off: Gemini throttles concurrent requests, so
+    three in parallel land in a 4-25s spread while the same three one after
+    another came in at 9-10s. The apparent win in a single trial was noise from
+    the provider, not real. All three calls are independent round-trips, so if
+    this ever runs against an endpoint that does not throttle, parallelising the
+    three _post calls is a one-line change.
+
+    image_text and the three comments are template-only — they pick a random
+    target audience and paste the referral link into a fixed string — so they
+    cost nothing and were never worth batching.
+    """
+    from linkedin_outreach import (
+        generate_linkedin_post, generate_x_post, generate_facebook_post,
+        generate_image_text, generate_linkedin_comment, generate_x_comment,
+        generate_facebook_comment, load_config
+    )
+
+    config = load_config()
+
+    generated = {}
+    for field, fn in [
+        ('linkedin_post', lambda: generate_linkedin_post(job, referral_link, config, style_name)),
+        ('x_post', lambda: generate_x_post(job, referral_link, config, style_name)),
+        ('facebook_post', lambda: generate_facebook_post(job, referral_link, config, style_name)),
+        ('image_text', lambda: generate_image_text(job, config)),
+        ('linkedin_comment', lambda: generate_linkedin_comment(job, referral_link, config)),
+        ('x_comment', lambda: generate_x_comment(job, referral_link, config)),
+        ('facebook_comment', lambda: generate_facebook_comment(job, referral_link, config)),
+    ]:
+        try:
+            generated[field] = fn()
+        except Exception as e:
+            print(f"  ⚠️  {field} failed: {e}")
+            generated[field] = ''
+        if verbose and field.endswith('_post'):
+            print(f"    {'✅' if generated[field] else '⚠️ '} {field}: {len(generated[field])} chars")
+
+    return generated
+
+
+def apply_generated_posts(job, rows, generated):
+    """Copy generated content onto the job row. Returns True if a row matched."""
+    for r in rows:
+        if r.get('title', '').strip().lower() == job['title'].strip().lower():
+            for field in POST_FIELDS:
+                if field in generated:
+                    r[field] = generated[field]
+            return True
+    return False
+
+
 def fetch_referral_link(job_url, job_title):
     """Open the job page and get its referral link automatically.
 
@@ -579,26 +641,11 @@ def work_on_job_menu(num, job, xlsx_file, rows, fieldnames):
         post_style = choose_style_interactive("social post style")
         sys.path.insert(0, '.')
         try:
-            from linkedin_outreach import (
-                generate_linkedin_post, generate_x_post, generate_facebook_post,
-                generate_image_text, generate_linkedin_comment, generate_x_comment,
-                generate_facebook_comment, load_config
-            )
-            config = load_config()
-            linkedin_post = generate_linkedin_post(job, clean_link, config, post_style)
-            x_post = generate_x_post(job, clean_link, config, post_style)
-            facebook_post = generate_facebook_post(job, clean_link, config, post_style)
-            image_text = generate_image_text(job, config)
-            linkedin_comment = generate_linkedin_comment(job, clean_link, config)
-            x_comment = generate_x_comment(job, clean_link, config)
-            facebook_comment = generate_facebook_comment(job, clean_link, config)
-            job['linkedin_post'] = linkedin_post
-            job['x_post'] = x_post
-            job['facebook_post'] = facebook_post
-            job['image_text'] = image_text
-            job['linkedin_comment'] = linkedin_comment
-            job['x_comment'] = x_comment
-            job['facebook_comment'] = facebook_comment
+            generated = generate_all_posts(job, clean_link, post_style)
+            for field in POST_FIELDS:
+                if field in generated:
+                    job[field] = generated[field]
+            apply_generated_posts(job, rows, generated)
             print(f"   ✅ Generated! (Style: {get_style(post_style)['name']})")
         except Exception as e:
             print(f"   ⚠️  Error: {e}")
@@ -814,39 +861,16 @@ def generate_posts_for_job(num, job, xlsx_file, rows, fieldnames):
     
     sys.path.insert(0, '.')
     try:
-        from linkedin_outreach import (
-            generate_linkedin_post, generate_x_post, generate_facebook_post,
-            generate_image_text, generate_linkedin_comment, generate_x_comment,
-            generate_facebook_comment, load_config
-        )
-        
-        config = load_config()
-        
-        linkedin_post = generate_linkedin_post(job, referral_link, config, style_name)
-        x_post = generate_x_post(job, referral_link, config, style_name)
-        facebook_post = generate_facebook_post(job, referral_link, config, style_name)
-        image_text = generate_image_text(job, config)
-        linkedin_comment = generate_linkedin_comment(job, referral_link, config)
-        x_comment = generate_x_comment(job, referral_link, config)
-        facebook_comment = generate_facebook_comment(job, referral_link, config)
-        
-        # Update job
-        for r in rows:
-            if r.get('title', '').strip().lower() == job['title'].strip().lower():
-                r['linkedin_post'] = linkedin_post
-                r['x_post'] = x_post
-                r['facebook_post'] = facebook_post
-                r['image_text'] = image_text
-                r['linkedin_comment'] = linkedin_comment
-                r['x_comment'] = x_comment
-                r['facebook_comment'] = facebook_comment
-                break
-        
+        generated = generate_all_posts(job, referral_link, style_name)
+
+        if not apply_generated_posts(job, rows, generated):
+            print("  ⚠️  Could not match this job's title in the sheet — nothing saved.")
+
         save_xlsx_jobs(xlsx_file, rows, fieldnames)
         print(f"  ✅ Social posts generated! (Style: {selected_style['name']})")
-        print(f"    📱 LinkedIn post: {len(linkedin_post)} chars")
-        print(f"    🐦 X/Twitter post: {len(x_post)} chars")
-        print(f"    📘 Facebook post: {len(facebook_post)} chars")
+        print(f"    📱 LinkedIn post: {len(generated.get('linkedin_post', ''))} chars")
+        print(f"    🐦 X/Twitter post: {len(generated.get('x_post', ''))} chars")
+        print(f"    📘 Facebook post: {len(generated.get('facebook_post', ''))} chars")
     except Exception as e:
         print(f"  ⚠️  Error: {e}")
 
