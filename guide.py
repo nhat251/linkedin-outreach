@@ -248,8 +248,12 @@ def fetch_referral_link(job_url, job_title):
         return None
 
     # A link attributed to a headhunter only pays 80% (uctalent.io's own
-    # "net earning" tooltip). An internal referrer gets 100%, which is what the
-    # /referral/quick_process/ links with utm_content=recruiter indicate.
+    # "net earning" tooltip). An internal referrer gets 100%, which is what
+    # utm_content=recruiter indicates. utm_content is optional though: the site
+    # leaves it off when the sharer's user_type is unknown, so a current link
+    # can come back as 'unknown' rather than 'legacy'. Only the pre-Epic-5
+    # headhunter links are worth warning about; for 'unknown' the reward tier
+    # is still resolved server-side from the token, it just is not in the URL.
     if info.get('kind') == 'legacy':
         print("   ⚠️  This is an older headhunter-style link (80% net).")
         print("      Re-fetch it after signing in on the internal account for 100%.")
